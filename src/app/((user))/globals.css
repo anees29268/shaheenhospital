@@ -1,0 +1,23 @@
+.global {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.relativeCSS {
+  border: solid 1px #ff0000;
+}
+.printClass {
+  height: 297mm;
+  width: 210mm;
+  overflow: hidden;
+  margin: 0 !important;
+  /* padding: 0 10px; */
+  padding: 0 !important;
+  background-color: #ff0000;
+}
+.testClass {
+  height: 100%;
+  width: 100%;
+  padding: 10px;
+}
