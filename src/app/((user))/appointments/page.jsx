@@ -1,5 +1,6 @@
 "use client";
 
+import AddAppointments from "@/components/users/AddAppointments";
 import ManageAppointments from "@/components/users/ManageAppointments";
 import { AddBox, ManageAccounts } from "@mui/icons-material";
 import { Box, Stack, Tab, Tabs } from "@mui/material";
@@ -25,7 +26,9 @@ const Appointments = () => {
           <Tab label="Manage Appointments" icon={<ManageAccounts />} />
         </Tabs>
       </Box>
-      <Box hidden={tabIndex !== 0}></Box>
+      <Box hidden={tabIndex !== 0}>
+        <AddAppointments />
+      </Box>
 
       {/* Manage Appointments */}
 

@@ -14,12 +14,12 @@ export const userMenu = [
   {
     title: "Records",
     icon: <Memory />,
-    url: "/",
+    url: "/records",
   },
   {
     title: "Doctors",
     icon: <Diversity2 />,
-    url: "/",
+    url: "/doctors",
   },
   {
     title: "Home",

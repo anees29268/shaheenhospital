@@ -8,8 +8,8 @@
   border: solid 1px #ff0000;
 }
 .printClass {
-  height: 297mm;
-  width: 210mm;
+  /* height: 297mm;
+  width: 210mm; */
   overflow: hidden;
   margin: 0 !important;
   /* padding: 0 10px; */
@@ -19,5 +19,19 @@
 .testClass {
   height: 100%;
   width: 100%;
-  padding: 10px;
+  padding: 30px;
+  /* margin-left: 65px; */
+  /* margin-top: 30px; */
+  /* max-width: 210mm; */
+}
+.watermark {
+  background: url("/assets/logo.jpg");
+  height: 200px;
+  width: 200px;
+  background-position: bottom;
+  background-repeat: no-repeat;
+  background-size: 100%;
+  opacity: 0.5;
+  transform: translate(400px, 400px) scale(3.5);
+  /* position: absolute; */
 }
