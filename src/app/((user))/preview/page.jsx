@@ -9,10 +9,22 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
+import dayjs from "dayjs";
 import React, { useCallback, useRef } from "react";
 import ReactToPrint from "react-to-print";
 
-const PrintPreviews = () => {
+const PrintPreviews = ({
+  name,
+  father_husband,
+  cnic,
+  gender,
+  age,
+  patientType,
+  address,
+  contact,
+  regDate,
+  doctor,
+}) => {
   const componentRef = useRef(null);
   const handlePrint = () => {};
 
@@ -32,7 +44,7 @@ const PrintPreviews = () => {
   }, []);
 
   return (
-    <Box p={2}>
+    <Box p={4}>
       <ReactToPrint
         content={reactToPrintContent}
         documentTitle="AwesomeFileName"
@@ -50,10 +62,10 @@ const PrintPreviews = () => {
 "
           }
         </style>
-        <div className="flash" />
+
         <div className="testClass">
           {/* Top Preview */}
-          <Box display={"flex"} gap={2} alignItems={"center"}>
+          <Box display={"flex"} gap={2} alignItems={"center"} p={2.5}>
             <Avatar
               src="/assets/logo.jpg"
               sx={{
@@ -78,11 +90,12 @@ const PrintPreviews = () => {
           <Box
             display={"flex"}
             justifyContent={"space-between"}
-            mt={4}
-            fontSize={14}
+            pr={4}
+            pl={4}
+            fontSize={13}
             sx={{
               ".MuiTypography-root": {
-                fontSize: 14,
+                // fontSize: 12,
               },
             }}
           >
@@ -99,23 +112,23 @@ const PrintPreviews = () => {
             >
               <Box>
                 <b>Name: </b>
-                <Typography variant="body2">Muhammad Abbas</Typography>
+                <Typography variant="body2">{name}</Typography>
               </Box>
               <Box>
                 <b>Father/Husband: </b>
-                <Typography variant="body2">Ilyas Abbas</Typography>
+                <Typography variant="body2">{father_husband}</Typography>
               </Box>
               <Box>
                 <b>CNIC: </b>
-                <Typography variant="body2">324543534534</Typography>
+                <Typography variant="body2">{cnic}</Typography>
               </Box>
               <Box>
                 <b>Gender: </b>
-                <Typography variant="body2">Male</Typography>
+                <Typography variant="body2">{gender}</Typography>
               </Box>
               <Box>
                 <b>Age: </b>
-                <Typography variant="body2">34</Typography>
+                <Typography variant="body2">{age}</Typography>
               </Box>
             </Stack>
 
@@ -132,32 +145,31 @@ const PrintPreviews = () => {
             >
               <Box>
                 <b>Patient Type: </b>
-                <Typography variant="body2">General</Typography>
+                <Typography variant="body2">{patientType}</Typography>
               </Box>
               <Box>
-                <b>Address</b>
-                <Typography variant="body2">Kashrote, Gilgit</Typography>
+                <b>Address:</b>
+                <Typography variant="body2">{address}</Typography>
               </Box>
               <Box>
-                <b>Contact</b>
-                <Typography variant="body2">0300000000</Typography>
+                <b>Contact:</b>
+                <Typography variant="body2">{contact}</Typography>
               </Box>
-              <Box>
-                <b>FEE</b>
-                <Typography variant="body2">RS. 1500</Typography>
-              </Box>
+
               <Box>
                 <b>Reg. Date: </b>
-                <Typography variant="body2">12 Dec, 2022 5:37 PM</Typography>
+                <Typography variant="body2">
+                  {dayjs(regDate).format("D MMM, YYYY h:mm A")}
+                </Typography>
               </Box>
             </Stack>
 
             <Stack
               direction={"column"}
-              className="global"
+              // className="global"
               sx={{
                 ".MuiTypography-root": {
-                  fontSize: 29,
+                  fontSize: 24,
                 },
               }}
             >
@@ -166,6 +178,15 @@ const PrintPreviews = () => {
                 <Typography variant="h5" textAlign={"center"} fontWeight={700}>
                   45
                 </Typography>
+
+                <div
+                  style={{
+                    padding: "15px 0 0 0",
+                    textAlign: "center",
+                  }}
+                >
+                  {patientType === "general" ? doctor : "Dr._________________"}
+                </div>
               </Box>
             </Stack>
           </Box>
@@ -176,11 +197,13 @@ const PrintPreviews = () => {
             sx={{
               borderTop: "1px solid black",
             }}
+            pr={4}
+            pl={4}
           >
             <Stack
               direction={"column"}
               spacing={1}
-              width={175}
+              width={280}
               p={"20px 0"}
               sx={{
                 ".MuiTypography-root": {
@@ -188,48 +211,30 @@ const PrintPreviews = () => {
                 },
               }}
             >
-              <Typography variant="body1">Vitals</Typography>
+              <Box display={"flex"} gap={7}>
+                <Typography variant="body1">BP</Typography>
+                <Typography variant="body1">Temp</Typography>
+              </Box>
               <br />
               <br />
+              <Box display={"flex"} gap={5}>
+                <Typography variant="body1">Pulse</Typography>
+                <Typography variant="body1">Weight</Typography>
+              </Box>
+
               <br />
               <br />
+
               <Typography variant="body1">Allergies</Typography>
               <br />
-              <br />
+
               <br />
               <Typography variant="body1">Investigations</Typography>
               <br />
               <br />
               <br />
-              <br />
-              <br />
-              <br />
+
               <Typography variant="body1">Procedures</Typography>
-            </Stack>
-            <Stack
-              direction={"column"}
-              spacing={7}
-              p={"20px 0"}
-              sx={{
-                borderLeft: "1px solid black",
-                paddingLeft: 2,
-                ".MuiTypography-root": {
-                  fontWeight: 700,
-                },
-              }}
-            >
-              <Typography variant="body1">Presenting Complaint</Typography>
-              <br />
-              <Typography variant="body1">Examination</Typography>
-              <br />
-              <Typography variant="body1">Final Diagnosis</Typography>
-              <br />
-              <Typography variant="body1">Treatment</Typography>
-              <br />
-              <br />
-              <br />
-              <br />
-              <br />
               <br />
               <br />
               <br />
@@ -244,18 +249,67 @@ const PrintPreviews = () => {
               <br />
               <br />
               <br />
+            </Stack>
+            <Stack
+              direction={"column"}
+              spacing={7}
+              p={"20px 0"}
+              sx={{
+                borderLeft: "1px solid black",
+                paddingLeft: 2,
+                width: "100%",
+
+                ".MuiTypography-root": {
+                  fontWeight: 700,
+                },
+              }}
+            >
+              <Typography variant="body1">Presenting Complaint</Typography>
+              <br />
+              <Typography variant="body1">Examination</Typography>
+              <br />
+              <Typography variant="body1">Final Diagnosis</Typography>
               <br />
               <br />
+              <br />
+              <br />
+              <Typography variant="body1">Treatment</Typography>
+
+              <br />
+              <br />
+              <br />
+
+              <br />
+              <br />
+              <br />
+              <br />
+
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  width: "100%",
+                  alignItems: "flex-end",
+                  transform: "translateY(55px)",
+                }}
+              >
+                <Typography variant="body1">
+                  Not Valid for Court Use!
+                </Typography>
+              </Box>
             </Stack>
           </Box>
           {/* <Box className="watermark"></Box> */}
           {/* Footer Area */}
           <Box
             className="global"
+            pr={4}
+            flexDirection={"column"}
+            pl={4}
             sx={{
               borderTop: "1px solid black",
-              p: "30px 0",
-              alignItems: "flex-end",
+              p: "10px 0",
+              // alignItems: "flex-end",
               height: "100%",
             }}
           >
@@ -267,6 +321,23 @@ const PrintPreviews = () => {
               }}
             >
               Old Jeglot Adda, PIA Link Road, Kashrote, Gilgit.
+            </Typography>
+
+            <Typography
+              variant="body1"
+              sx={{
+                textTransform: "uppercase",
+                fontSize: 14,
+                fontWeight: 700,
+                mt: 1,
+              }}
+            >
+              Doctor Zohaib Ahmad
+            </Typography>
+            <Typography variant="caption" maxWidth={"90%"} textAlign={"center"}>
+              MBBS (HMC), FCPS (General Surgery), Consultant General Surgeon,
+              City Hospital, Gilgit, Ex. Registrar Ayub Teaching Hospital
+              Abbottabad
             </Typography>
           </Box>
         </div>

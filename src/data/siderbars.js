@@ -27,3 +27,20 @@ export const userMenu = [
     url: "/",
   },
 ];
+export const doctorMenu = [
+  {
+    title: "Dashboard",
+    icon: <Home />,
+    url: "/admin",
+  },
+  {
+    title: "Doctors",
+    icon: <WorkOutline />,
+    url: "/admin/doctors",
+  },
+  {
+    title: "Users",
+    icon: <Memory />,
+    url: "/admin/users",
+  },
+];

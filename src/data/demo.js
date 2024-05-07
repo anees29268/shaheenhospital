@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 export const appointmentsData = [
   {
     cnic: "1234567890",
@@ -72,5 +74,25 @@ export const recordsData = [
     fee: 1500,
     status: "checked",
     remarks: "Throat issues etc..........",
+  },
+];
+export const doctors = [
+  {
+    name: "Dr. Zohaib Ahmad",
+    cnic: "34534534345",
+    contact: "34534543",
+    specialization: "MBBS, FCPS",
+    desc: "dsfdfsdf",
+    address: "dfsdfsd",
+    hiringDate: dayjs(new Date()).format("DD/MM/YYY"),
+  },
+  {
+    name: "Dr. Imran Raza",
+    cnic: "098756765657",
+    contact: "123343545",
+    specialization: "dgfdfsg",
+    desc: "sdfgdgfs",
+    address: "sdfgdgfgfs",
+    hiringDate: dayjs(new Date()).format("DD/MM/YYY"),
   },
 ];

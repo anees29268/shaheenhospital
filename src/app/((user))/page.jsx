@@ -20,6 +20,7 @@ import dayjs from "dayjs";
 import { useState } from "react";
 import React, { useCallback, useRef } from "react";
 import ReactToPrint from "react-to-print";
+import PrintPreviews from "./preview/page";
 
 export default function Home() {
   const [record, setRecord] = useState({
@@ -28,10 +29,12 @@ export default function Home() {
     name: "",
     fatherName: "",
     age: "",
+    gender: "",
     nationality: "PAKISTANI",
     bloodGroup: "",
     contact: "",
     case: "",
+    doctor: "",
     fee: "",
     address: "",
   });
@@ -158,6 +161,23 @@ export default function Home() {
           />
         </Grid>
         <Grid item xs={12} sm={6} mt={1}>
+          <FormControl variant="filled" fullWidth>
+            <InputLabel id="demo-simple-select-standard-label">
+              Gender
+            </InputLabel>
+            <Select
+              placeholder="male/female/other"
+              value={record.gender}
+              onChange={(e) => setRecord({ ...record, gender: e.target.value })}
+              required
+            >
+              <MenuItem value={"Male"}>Male</MenuItem>
+              <MenuItem value={"Female"}>Female</MenuItem>
+              <MenuItem value={"Other"}>Other</MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
+        <Grid item xs={12} sm={6} mt={1}>
           <TextField
             fullWidth
             value={record.age === "" ? "" : record.age}
@@ -229,6 +249,27 @@ export default function Home() {
             </Select>
           </FormControl>
         </Grid>
+        {record.case === "general" ? (
+          <Grid item xs={12} sm={6} mt={1}>
+            <FormControl variant="filled" fullWidth>
+              <InputLabel id="demo-simple-select-standard-label">
+                Choose Doctor
+              </InputLabel>
+              <Select
+                placeholder="Dr. Zohaib"
+                value={record.doctor}
+                onChange={(e) =>
+                  setRecord({ ...record, doctor: e.target.value })
+                }
+                required
+              >
+                <MenuItem value={"Dr. Zohaib"}>Dr. Zohaib</MenuItem>
+                <MenuItem value={"Dr. Imran"}>Dr. Imran</MenuItem>
+                <MenuItem value={"Dr. Zeeshan"}>Dr. Zeeshan</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+        ) : null}
         <Grid item xs={12} sm={6} mt={1}>
           <TextField
             fullWidth
@@ -288,155 +329,18 @@ export default function Home() {
         </Grid>
       </Grid>
       <Box p={2}>
-        <ReactToPrint
-          content={reactToPrintContent}
-          documentTitle="AwesomeFileName"
-          // onAfterPrint={handleAfterPrint}
-          // onBeforeGetContent={handleOnBeforeGetContent}
-          // onBeforePrint={handleBeforePrint}
-          removeAfterPrint
-          trigger={reactToPrintTrigger}
+        <PrintPreviews
+          name={record.name}
+          father_husband={record.fatherName}
+          regDate={record.date}
+          cnic={record.cnic}
+          bloodGroup={record.bloodGroup}
+          contact={record.contact}
+          address={record.address}
+          age={record.age}
+          patientType={record.case}
+          gender={record.gender}
         />
-        <div ref={componentRef}>
-          <style type="text/css" media="print">
-            {
-              "\
-   @page { size: A4;  }\
-"
-            }
-          </style>
-          <div className="flash" />
-          <div className="testClass">
-            <Box
-              display={"flex"}
-              justifyContent={"space-between"}
-              width={"100%"}
-            >
-              <Stack
-                direction={"column"}
-                spacing={0.1}
-                sx={{
-                  ".MuiTypography-root": {
-                    fontSize: 9,
-                  },
-                }}
-              >
-                <Typography variant="body2" fontWeight={"700"}>
-                  {record.name}, {record.age} Years,{" "}
-                  {identifyGenderFromCNIC(record.cnic)}
-                </Typography>
-                <Stack direction={"row"}>
-                  <Typography width={70} variant="body2">
-                    Father/Husband:{" "}
-                  </Typography>
-                  <Typography variant="body2" color={"text.secondary"}>
-                    {record.fatherName}
-                  </Typography>
-                </Stack>
-                <Stack direction={"row"}>
-                  <Typography width={70} variant="body2">
-                    Contact:{" "}
-                  </Typography>
-                  <Typography variant="body2" color={"text.secondary"}>
-                    {record.contact === "" ? "N/A" : record.contact}
-                  </Typography>
-                </Stack>
-                <Stack direction={"row"}>
-                  <Typography width={70} variant="body2">
-                    CNIC:{" "}
-                  </Typography>
-                  <Typography variant="body2" color={"text.secondary"}>
-                    {record.cnic}
-                  </Typography>
-                </Stack>
-                <Stack direction={"row"}>
-                  <Typography width={70} variant="body2">
-                    Address:{" "}
-                  </Typography>
-                  <Typography variant="body2" color={"text.secondary"}>
-                    {record.address === "" ? "N/A" : record.address}
-                  </Typography>
-                </Stack>
-                <Stack direction={"row"}>
-                  <Typography width={70} variant="body2">
-                    Patient Type:{" "}
-                  </Typography>
-                  <Typography variant="body2" color={"text.secondary"}>
-                    {record.case}
-                  </Typography>
-                </Stack>
-              </Stack>
-              {/* Second */}
-              <Stack
-                direction={"column"}
-                spacing={0.1}
-                sx={{
-                  ".MuiTypography-root": {
-                    fontSize: 9,
-                  },
-                }}
-              >
-                <Stack direction={"row"}>
-                  <Typography width={70} variant="body2">
-                    Date:{" "}
-                  </Typography>
-                  <Typography variant="body2" color={"text.secondary"}>
-                    {record.date.format("DD MMM YYYY h:mm:ssA")}
-                  </Typography>
-                </Stack>
-                <Stack direction={"row"}>
-                  <Typography width={70} variant="body2">
-                    Contact:{" "}
-                  </Typography>
-                  <Typography variant="body2" color={"text.secondary"}>
-                    {record.contact === "" ? "N/A" : record.contact}
-                  </Typography>
-                </Stack>
-                <Stack direction={"row"}>
-                  <Typography width={70} variant="body2">
-                    CNIC:{" "}
-                  </Typography>
-                  <Typography variant="body2" color={"text.secondary"}>
-                    {record.cnic}
-                  </Typography>
-                </Stack>
-                <Stack direction={"row"}>
-                  <Typography width={70} variant="body2">
-                    Address:{" "}
-                  </Typography>
-                  <Typography variant="body2" color={"text.secondary"}>
-                    {record.address === "" ? "N/A" : record.address}
-                  </Typography>
-                </Stack>
-                <Stack direction={"row"}>
-                  <Typography width={70} variant="body2">
-                    Patient Type:{" "}
-                  </Typography>
-                  <Typography variant="body2" color={"text.secondary"}>
-                    {record.case}
-                  </Typography>
-                </Stack>
-              </Stack>
-              <Stack direction={"column"} spacing={0.1}>
-                <Typography variant="body1" fontSize={12}>
-                  TOKEN NO
-                </Typography>
-                <Typography variant="body1" fontSize={14} textAlign={"center"}>
-                  45
-                </Typography>
-              </Stack>
-            </Box>
-          </div>
-        </div>
-
-        {/* <Button
-          variant="contained"
-          color="primary"
-          onClick={handlePrint}
-          style={{ marginTop: "16px" }}
-        >
-          Print
-        </Button> */}
       </Box>
     </Stack>
   );
