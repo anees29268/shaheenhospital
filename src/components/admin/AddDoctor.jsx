@@ -4,6 +4,7 @@ import { AddBox } from "@mui/icons-material";
 import { Button, Grid, TextField } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import axios from "axios";
 import dayjs from "dayjs";
 import { useState } from "react";
 
@@ -11,6 +12,7 @@ const AddDoctor = () => {
   const [doctor, setDoctor] = useState({
     name: "",
     cnic: "",
+    email: "",
     contact: "",
     specialization: "",
     desc: "",
@@ -21,8 +23,28 @@ const AddDoctor = () => {
   const handleDateChange = (date) => {
     setDoctor({ ...doctor, hiringDate: dayjs(date) });
   };
-  const handleDoctorSubmit = (e) => {
+  const handleDoctorSubmit = async (e) => {
     e.preventDefault();
+
+    try {
+      const res = await axios.post("/api/admin/doctor", doctor);
+      if (res) {
+        alert("Doctor added!");
+        setDoctor({
+          name: "",
+          cnic: "",
+          email: "",
+          contact: "",
+          specialization: "",
+          desc: "",
+          address: "",
+          hiringDate: dayjs(new Date()),
+        });
+      }
+    } catch (error) {
+      alert(`${error}`);
+    } finally {
+    }
   };
 
   return (
@@ -54,6 +76,18 @@ const AddDoctor = () => {
           fullWidth
           onChange={(e) => setDoctor({ ...doctor, cnic: e.target.value })}
           placeholder="142013454354"
+        />
+      </Grid>
+      <Grid item xs={12} md={6}>
+        <TextField
+          label="Email"
+          type="email"
+          variant="filled"
+          required
+          value={doctor.email}
+          fullWidth
+          onChange={(e) => setDoctor({ ...doctor, email: e.target.value })}
+          placeholder="zohaib12@gmail.com"
         />
       </Grid>
       <Grid item xs={12} md={6}>

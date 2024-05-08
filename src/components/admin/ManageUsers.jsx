@@ -24,21 +24,25 @@ import { DateTimePicker } from "@mui/x-date-pickers";
 import axios from "axios";
 import { Delete, Edit } from "@mui/icons-material";
 
-const ManageDoctors = () => {
-  const [doctors, setDoctors] = useState();
+const ManageUsers = () => {
+  const [users, setUsers] = useState();
+  const [pass, setPass] = useState({
+    password: "",
+    confirmPassword: "",
+  });
 
-  const getDoctors = async () => {
+  const getUsers = async () => {
     try {
-      const res = await axios.get("/api/admin/doctor");
+      const res = await axios.get("/api/admin/users");
       if (res.status === 200) {
-        setDoctors(res.data);
+        setUsers(res.data);
       }
     } catch (error) {
       alert(`${error}`);
     }
   };
   useEffect(() => {
-    getDoctors();
+    getUsers();
   }, []);
 
   const columns = useMemo(
@@ -54,39 +58,14 @@ const ManageDoctors = () => {
         header: "Name",
         size: 150,
       },
-
-      {
-        accessorKey: "hiringDate", //access nested data with dot notation
-        header: "Hiring's Date",
-        size: 150,
-        editVariant: "date",
-        Cell: ({ renderedCellValue, row }) => (
-          <>{dayjs(renderedCellValue).format("DD/MM/YYYY")}</>
-        ),
-      },
       {
         accessorKey: "cnic", //access nested data with dot notation
         header: "CNIC",
         size: 150,
       },
       {
-        accessorKey: "contact", //access nested data with dot notation
-        header: "Contact",
-        size: 150,
-      },
-      {
-        accessorKey: "specialization",
-        header: "Specialization",
-        size: 150,
-      },
-      {
-        accessorKey: "desc", //normal accessorKey
-        header: "Description",
-        size: 200,
-      },
-      {
-        accessorKey: "address",
-        header: "Address",
+        accessorKey: "email", //access nested data with dot notation
+        header: "Email",
         size: 150,
       },
     ],
@@ -96,12 +75,23 @@ const ManageDoctors = () => {
   //   "DD MMMM, YYYY hh:mm A"
   // )}`,
 
-  const handleSaveDoctor = async ({ values, table }) => {
+  const handleSaveUser = async ({ values, table }) => {
+    if (pass.password !== pass.confirmPassword) {
+      alert("Passwords Not Matched!");
+      table.setEditingRow(null);
+      return;
+    }
     try {
-      const res = await axios.put("/api/admin/doctor", values);
+      const data = {
+        _id: values._id,
+        name: values.name,
+        cnic: values.cnic,
+        password: pass.password,
+      };
+      const res = await axios.put("/api/admin/users", data);
       if (res.status === 200) {
-        alert("Doctor Updated");
-        getDoctors();
+        alert("User Updated");
+        getUsers();
       }
     } catch (error) {
       alert(`${error}`);
@@ -110,13 +100,13 @@ const ManageDoctors = () => {
     }
   };
 
-  const handleDoctorDelete = async (row) => {
+  const handleUserDelete = async (row) => {
     const data = row.original;
     try {
-      const res = await axios.delete("/api/admin/doctor", { data });
+      const res = await axios.delete("/api/admin/users", { data });
       if (res.status === 200) {
-        alert("Doctor Deleted");
-        getDoctors();
+        alert("User Deleted");
+        getUsers();
       }
     } catch (error) {
       alert(`${error}`);
@@ -125,7 +115,7 @@ const ManageDoctors = () => {
 
   const table = useMaterialReactTable({
     columns,
-    data: doctors ? doctors : [],
+    data: users ? users : [],
     enableEditing: true,
     renderEditRowDialogContent: ({ table, row, internalEditComponents }) => (
       <>
@@ -134,13 +124,37 @@ const ManageDoctors = () => {
           sx={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}
         >
           {internalEditComponents}
+          <TextField
+            fullWidth
+            variant="filled"
+            label="Password"
+            value={pass.password}
+            onChange={(e) =>
+              setPass({
+                ...pass,
+                password: e.target.value,
+              })
+            }
+          />
+          <TextField
+            fullWidth
+            variant="filled"
+            label="Confirm Password"
+            value={pass.confirmPassword}
+            onChange={(e) =>
+              setPass({
+                ...pass,
+                confirmPassword: e.target.value,
+              })
+            }
+          />
         </DialogContent>
         <DialogActions>
           <MRT_EditActionButtons variant="text" table={table} row={row} />
         </DialogActions>
       </>
     ),
-    onEditingRowSave: handleSaveDoctor,
+    onEditingRowSave: handleSaveUser,
     renderRowActions: ({ row, table }) => (
       <Box sx={{ display: "flex", gap: "1rem" }}>
         <Tooltip title="Edit">
@@ -149,7 +163,7 @@ const ManageDoctors = () => {
           </IconButton>
         </Tooltip>
         <Tooltip title="Delete">
-          <IconButton color="error" onClick={() => handleDoctorDelete(row)}>
+          <IconButton color="error" onClick={() => handleUserDelete(row)}>
             <Delete />
           </IconButton>
         </Tooltip>
@@ -157,7 +171,7 @@ const ManageDoctors = () => {
     ),
   });
   return (
-    <Box>
+    <Box mt={4}>
       <Paper
         elevation={10}
         sx={{
@@ -170,4 +184,4 @@ const ManageDoctors = () => {
   );
 };
 
-export default ManageDoctors;
+export default ManageUsers;
