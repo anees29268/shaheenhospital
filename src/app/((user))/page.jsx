@@ -335,7 +335,7 @@ export default function Home() {
           contact={record.contact}
           address={record.address}
           age={record.age}
-          patientType={record.case}
+          patientType={record.caseType}
           gender={identifyGenderFromCNIC(record.cnic)}
         />
       </Box>
