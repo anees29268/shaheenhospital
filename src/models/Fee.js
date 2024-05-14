@@ -14,6 +14,13 @@ const feeSchema = new mongoose.Schema(
       ref: "Payment",
       required: true,
     },
+    amount: {
+      type: Number,
+      required: true,
+    },
+    discount: {
+      type: Number,
+    },
     desc: {
       type: String,
     },

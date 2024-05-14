@@ -18,19 +18,19 @@ export async function GET() {
 }
 
 export async function POST(req) {
-  const { patientId, paymentId, desc } = await req.json();
+  const { patientId, paymentId, desc, amount, discount } = await req.json();
 
-  if (!patientId || !paymentId) {
+  if (!patientId || !paymentId || !amount) {
     return new NextResponse("Fields Missing!", { status: 400 });
   }
   try {
     await dbConn();
 
-    console.log(patientId, paymentId, desc);
-
     const fees = await Fee({
       patientId,
       paymentId,
+      amount,
+      discount,
       desc,
     });
     const res = await fees.save();

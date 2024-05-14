@@ -4,6 +4,7 @@ import { doctorsData } from "@/data/demo";
 import { MedicalServices, Medication } from "@mui/icons-material";
 import { Box, Paper, Stack, Tab, Tabs } from "@mui/material";
 import axios from "axios";
+import dayjs from "dayjs";
 import {
   MaterialReactTable,
   useMaterialReactTable,
@@ -22,24 +23,41 @@ const Doctors = () => {
   const columns = useMemo(
     () => [
       {
-        accessorKey: "doctor", //access nested data with dot notation
+        accessorKey: "doctorId.name", //access nested data with dot notation
         header: "Doctor",
         size: 150,
       },
       {
-        accessorKey: "timing", //access nested data with dot notation
-        header: "Timing",
+        accessorKey: "startTime", //access nested data with dot notation
+        header: "Start Timing",
         size: 150,
+
+        Cell: ({ renderedCellValue, row }) => (
+          <>{dayjs(renderedCellValue).format("D MMM, YYYY h:mm A")}</>
+        ),
       },
       {
-        accessorKey: "days",
-        header: "Days",
+        accessorKey: "endTime", //access nested data with dot notation
+        header: "End Timing",
         size: 150,
+
+        Cell: ({ renderedCellValue, row }) => (
+          <>{dayjs(renderedCellValue).format("D MMM, YYYY h:mm A")}</>
+        ),
       },
       {
-        accessorKey: "desc", //normal accessorKey
-        header: "Description",
-        size: 200,
+        accessorKey: "roomNo", //access nested data with dot notation
+        header: "Room No",
+        size: 150,
+      },
+
+      {
+        accessorKey: "daysOfWeek", //access nested data with dot notation
+        header: "Days of Week",
+        size: 150,
+        Cell: ({ renderedCellValue, row }) => (
+          <>{renderedCellValue.toString()}</>
+        ),
       },
     ],
     []
@@ -47,7 +65,7 @@ const Doctors = () => {
 
   const table = useMaterialReactTable({
     columns,
-    data: doctorsData,
+    data: doctorsTiming ? doctorsTiming : [],
   });
 
   const getDoctorsTiming = async () => {
@@ -66,7 +84,6 @@ const Doctors = () => {
     getDoctorsTiming();
   }, []);
 
-  console.log(doctorsTiming);
   return (
     <Stack direction="column" spacing={1} p={1}>
       <Box className="global" gap={1}>

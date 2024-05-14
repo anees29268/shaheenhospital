@@ -36,6 +36,8 @@ const User_Fees = () => {
     patient: "",
     payment: "",
     desc: "",
+    amount: "",
+    discount: 0,
   });
 
   const getPatients = async () => {
@@ -96,14 +98,13 @@ const User_Fees = () => {
     if (value) {
       setFee({
         ...fee,
-
         payment: value || "",
+        amount: value.amount || "",
       });
     } else {
       // Clear the patient details if no value is selected
       setFee({
         ...fee,
-
         payment: "",
       });
     }
@@ -116,6 +117,8 @@ const User_Fees = () => {
       patientId: fee.patient._id,
       paymentId: fee.payment._id,
       desc: fee.desc,
+      amount: fee.amount,
+      discount: fee.discount,
     };
 
     const res = await axios.post("/api/user/fees", data);
@@ -125,6 +128,7 @@ const User_Fees = () => {
         patient: "",
         payment: "",
         desc: "",
+        discount: 0,
       });
       getFeesDetails();
     }
@@ -161,6 +165,19 @@ const User_Fees = () => {
         accessorKey: "paymentId.amount",
         header: "Amount",
         size: 150,
+      },
+      {
+        accessorKey: "discount",
+        header: "Discount",
+        size: 150,
+      },
+      {
+        accessorKey: "discount",
+        header: "Net Amount",
+        size: 150,
+        Cell: ({ renderedCellValue, row }) => (
+          <>{row.original.paymentId.amount - renderedCellValue}</>
+        ),
       },
     ],
     []
@@ -255,6 +272,31 @@ const User_Fees = () => {
           <TextField
             variant="filled"
             fullWidth
+            label="Amount"
+            type="number"
+            disabled
+            value={fee.payment.amount ? fee.payment.amount : ""}
+          />
+          <br />
+          <br />
+          <TextField
+            variant="filled"
+            fullWidth
+            label="Discount"
+            type="number"
+            value={fee.discount}
+            onChange={(e) =>
+              setFee({
+                ...fee,
+                discount: e.target.value,
+              })
+            }
+          />
+          <br />
+          <br />
+          <TextField
+            variant="filled"
+            fullWidth
             label="Description"
             multiline
             minRows={4}
@@ -265,6 +307,15 @@ const User_Fees = () => {
                 desc: e.target.value,
               })
             }
+          />
+          <br />
+          <br />
+          <TextField
+            variant="filled"
+            fullWidth
+            label="Net Amount"
+            disabled
+            value={fee.amount - fee.discount}
           />
           <br />
           <br />
