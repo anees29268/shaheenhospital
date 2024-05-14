@@ -3,14 +3,17 @@
 import { doctorsData } from "@/data/demo";
 import { MedicalServices, Medication } from "@mui/icons-material";
 import { Box, Paper, Stack, Tab, Tabs } from "@mui/material";
+import axios from "axios";
 import {
   MaterialReactTable,
   useMaterialReactTable,
 } from "material-react-table";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const Doctors = () => {
   const [tabIndex, setTabIndex] = useState(0);
+
+  const [doctorsTiming, setDoctorsTiming] = useState();
 
   const handleTabChange = (event, newValue) => {
     setTabIndex(newValue);
@@ -47,6 +50,23 @@ const Doctors = () => {
     data: doctorsData,
   });
 
+  const getDoctorsTiming = async () => {
+    try {
+      const res = await axios.get("/api/admin/timing");
+
+      if (res.status === 200) {
+        setDoctorsTiming(res.data);
+      }
+    } catch (error) {
+      alert(`${error}`);
+    }
+  };
+
+  useEffect(() => {
+    getDoctorsTiming();
+  }, []);
+
+  console.log(doctorsTiming);
   return (
     <Stack direction="column" spacing={1} p={1}>
       <Box className="global" gap={1}>

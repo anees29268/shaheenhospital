@@ -21,6 +21,7 @@ import { useState } from "react";
 import React, { useCallback, useRef } from "react";
 import ReactToPrint from "react-to-print";
 import PrintPreviews from "./preview/page";
+import axios from "axios";
 
 export default function Home() {
   const [record, setRecord] = useState({
@@ -29,34 +30,19 @@ export default function Home() {
     name: "",
     fatherName: "",
     age: "",
-    gender: "",
     nationality: "PAKISTANI",
     bloodGroup: "",
     contact: "",
-    case: "",
+    caseType: "",
     doctor: "",
     fee: "",
     address: "",
+    gender: "",
   });
   const handleDateChange = (date) => {
     setRecord({ ...record, date: dayjs(date) });
   };
   const componentRef = useRef(null);
-
-  const reactToPrintContent = useCallback(() => {
-    return componentRef.current;
-  }, [componentRef.current]);
-
-  const reactToPrintTrigger = useCallback(() => {
-    // NOTE: could just as easily return <SomeComponent />. Do NOT pass an `onClick` prop
-    // to the root node of the returned component as it will be overwritten.
-
-    // Bad: the `onClick` here will be overwritten by `react-to-print`
-    // return <button onClick={() => alert('This will not work')}>Print this out!</button>;
-
-    // Good
-    return <button>Print </button>;
-  }, []);
 
   const handlePrint = () => {
     const content = document.getElementById("print").innerHTML;
@@ -79,8 +65,38 @@ export default function Home() {
     }
   }
 
+  const handleRecordSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const res = await axios.post("/api/user/patients", record);
+      if (res.status === 201) {
+        alert(`${res.data}`);
+      }
+    } catch (error) {
+      alert(`${error}`);
+    }
+  };
+
+  const clearRecord = () => {
+    setRecord({
+      date: dayjs(new Date()),
+      cnic: "",
+      name: "",
+      fatherName: "",
+      age: "",
+      nationality: "PAKISTANI",
+      bloodGroup: "",
+      contact: "",
+      caseType: "",
+      doctor: "",
+      fee: "",
+      address: "",
+      gender: "",
+    });
+  };
   return (
-    <Stack direction="column" spacing={1} p={1}>
+    <Stack direction="column" spacing={1} p={3}>
       <Typography
         variant="h5"
         fontWeight={700}
@@ -94,7 +110,7 @@ export default function Home() {
         component="form"
         spacing={1}
         p={"0 20px"}
-        // onSubmit={handleRecordSubmit}
+        onSubmit={handleRecordSubmit}
         sx={{
           maxWidth: 1000,
           ".MuiTextField-root": {
@@ -116,7 +132,6 @@ export default function Home() {
           <TextField
             fullWidth
             value={record.cnic}
-            required
             variant="filled"
             label="CNIC"
             placeholder="1530287569081"
@@ -124,6 +139,7 @@ export default function Home() {
               setRecord({
                 ...record,
                 cnic: e.target.value,
+                gender: identifyGenderFromCNIC(e.target.value),
               })
             }
           />
@@ -160,23 +176,7 @@ export default function Home() {
             }
           />
         </Grid>
-        <Grid item xs={12} sm={6} mt={1}>
-          <FormControl variant="filled" fullWidth>
-            <InputLabel id="demo-simple-select-standard-label">
-              Gender
-            </InputLabel>
-            <Select
-              placeholder="male/female/other"
-              value={record.gender}
-              onChange={(e) => setRecord({ ...record, gender: e.target.value })}
-              required
-            >
-              <MenuItem value={"Male"}>Male</MenuItem>
-              <MenuItem value={"Female"}>Female</MenuItem>
-              <MenuItem value={"Other"}>Other</MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
+
         <Grid item xs={12} sm={6} mt={1}>
           <TextField
             fullWidth
@@ -215,13 +215,15 @@ export default function Home() {
               Blood Group
             </InputLabel>
             <Select
-              placeholder="Emergency"
-              value={record.status}
+              placeholder="Blood Group"
+              value={record.bloodGroup}
               onChange={(e) =>
                 setRecord({ ...record, bloodGroup: e.target.value })
               }
-              required
             >
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
               <MenuItem value={"A+"}>A+</MenuItem>
               <MenuItem value={"A-"}>A-</MenuItem>
               <MenuItem value={"B+"}>B+</MenuItem>
@@ -240,36 +242,21 @@ export default function Home() {
             </InputLabel>
             <Select
               placeholder="Emergency"
-              value={record.status}
-              onChange={(e) => setRecord({ ...record, case: e.target.value })}
+              value={record.caseType}
+              onChange={(e) =>
+                setRecord({ ...record, caseType: e.target.value })
+              }
               required
             >
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
               <MenuItem value={"emergency"}>Emergency</MenuItem>
               <MenuItem value={"general"}>General</MenuItem>
             </Select>
           </FormControl>
         </Grid>
-        {record.case === "general" ? (
-          <Grid item xs={12} sm={6} mt={1}>
-            <FormControl variant="filled" fullWidth>
-              <InputLabel id="demo-simple-select-standard-label">
-                Choose Doctor
-              </InputLabel>
-              <Select
-                placeholder="Dr. Zohaib"
-                value={record.doctor}
-                onChange={(e) =>
-                  setRecord({ ...record, doctor: e.target.value })
-                }
-                required
-              >
-                <MenuItem value={"Dr. Zohaib"}>Dr. Zohaib</MenuItem>
-                <MenuItem value={"Dr. Imran"}>Dr. Imran</MenuItem>
-                <MenuItem value={"Dr. Zeeshan"}>Dr. Zeeshan</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-        ) : null}
+
         <Grid item xs={12} sm={6} mt={1}>
           <TextField
             fullWidth
@@ -317,14 +304,24 @@ export default function Home() {
             }
           />
         </Grid>
-        <Grid item xs={12} mt={1}>
+        <Grid item xs={12} sm={6} mt={1}>
           <Button
             variant="contained"
             color="primary"
-            onClick={handlePrint}
+            type="submit"
             style={{ marginTop: "16px" }}
           >
             Add Patient
+          </Button>
+        </Grid>
+        <Grid item xs={12} sm={6} mt={1}>
+          <Button
+            variant="contained"
+            color="success"
+            onClick={() => clearRecord()}
+            style={{ marginTop: "16px" }}
+          >
+            Clear Record
           </Button>
         </Grid>
       </Grid>
@@ -339,7 +336,7 @@ export default function Home() {
           address={record.address}
           age={record.age}
           patientType={record.case}
-          gender={record.gender}
+          gender={identifyGenderFromCNIC(record.cnic)}
         />
       </Box>
     </Stack>

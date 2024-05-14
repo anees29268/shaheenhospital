@@ -1,4 +1,12 @@
-import { Diversity2, Home, Memory, WorkOutline } from "@mui/icons-material";
+import {
+  Diversity2,
+  Home,
+  Memory,
+  Payment,
+  PaymentOutlined,
+  Timeline,
+  WorkOutline,
+} from "@mui/icons-material";
 
 export const userMenu = [
   {
@@ -22,9 +30,9 @@ export const userMenu = [
     url: "/doctors",
   },
   {
-    title: "Home",
-    icon: <Home />,
-    url: "/",
+    title: "Fees",
+    icon: <PaymentOutlined />,
+    url: "/fees",
   },
 ];
 export const doctorMenu = [
@@ -37,6 +45,16 @@ export const doctorMenu = [
     title: "Doctors",
     icon: <WorkOutline />,
     url: "/admin/doctors",
+  },
+  {
+    title: "Timings",
+    icon: <Timeline />,
+    url: "/admin/timings",
+  },
+  {
+    title: "Payments",
+    icon: <Payment />,
+    url: "/admin/payments",
   },
   {
     title: "Users",

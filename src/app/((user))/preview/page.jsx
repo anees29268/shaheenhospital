@@ -24,6 +24,7 @@ const PrintPreviews = ({
   contact,
   regDate,
   doctor,
+  appDate,
 }) => {
   const componentRef = useRef(null);
   const handlePrint = () => {};
@@ -162,6 +163,14 @@ const PrintPreviews = ({
                   {dayjs(regDate).format("D MMM, YYYY h:mm A")}
                 </Typography>
               </Box>
+              {appDate && (
+                <Box>
+                  <b>Appoint. Date: </b>
+                  <Typography variant="body2">
+                    {dayjs(appDate).format("D MMM, YYYY h:mm A")}
+                  </Typography>
+                </Box>
+              )}
             </Stack>
 
             <Stack
@@ -185,7 +194,7 @@ const PrintPreviews = ({
                     textAlign: "center",
                   }}
                 >
-                  {patientType === "general" ? doctor : "Dr._________________"}
+                  {patientType === "GENERAL" ? doctor : "Dr._________________"}
                 </div>
               </Box>
             </Stack>

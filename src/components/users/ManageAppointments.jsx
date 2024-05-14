@@ -6,7 +6,7 @@ import {
   MaterialReactTable,
   useMaterialReactTable,
 } from "material-react-table";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { appointmentsData } from "@/data/demo";
 import {
@@ -20,6 +20,7 @@ import {
 } from "@mui/material";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { DateTimePicker } from "@mui/x-date-pickers";
+import axios from "axios";
 
 const ManageAppointments = () => {
   const [appointment, setAppointment] = useState({
@@ -32,33 +33,39 @@ const ManageAppointments = () => {
     appointmentDate: dayjs(new Date()),
     fee: "-",
   });
+  const [apptData, setApptData] = useState();
   const columns = useMemo(
     () => [
       {
-        accessorKey: "cnic", //access nested data with dot notation
+        accessorKey: "patient.cnic", //access nested data with dot notation
         header: "CNIC",
         size: 150,
       },
       {
-        accessorKey: "patient", //access nested data with dot notation
+        accessorKey: "patient.name", //access nested data with dot notation
         header: "Patient",
         size: 150,
       },
       {
-        accessorKey: "doctor",
+        accessorKey: "doctor.name",
         header: "Doctor",
         size: 150,
       },
       {
-        accessorKey: "bookingDate", //normal accessorKey
+        accessorKey: "createdAt", //normal accessorKey
         header: "Booking Date",
         size: 200,
-        editVariant: "custom",
+        Cell: ({ renderedCellValue, row }) => (
+          <>{dayjs(renderedCellValue).format("D MMM, YYYY h:mm A")}</>
+        ),
       },
       {
         accessorKey: "appointmentDate",
         header: "Appointment Date",
         size: 150,
+        Cell: ({ renderedCellValue, row }) => (
+          <>{dayjs(renderedCellValue).format("D MMM, YYYY h:mm A")}</>
+        ),
       },
     ],
     []
@@ -71,64 +78,6 @@ const ManageAppointments = () => {
     setAppointment({ ...appointment, appointmentDate: dayjs(date) });
   };
 
-  const patients = [
-    {
-      id: "001",
-      cnic: "1234567890",
-      name: "Sahee Jan",
-    },
-    {
-      id: "002",
-      cnic: "0987654321",
-      name: "Ishaq Dilber",
-    },
-  ];
-  const doctors = [
-    {
-      id: "001",
-
-      name: "Dr. Hadi",
-    },
-    {
-      id: "002",
-
-      name: "Dr. Zeeshan",
-    },
-    {
-      id: "003",
-
-      name: "Dr. Saleem",
-    },
-    {
-      id: "004",
-
-      name: "Dr. Iqrar",
-    },
-    {
-      id: "005",
-
-      name: "Dr. Abrahi,",
-    },
-  ];
-
-  const handlePatientChange = (event, value) => {
-    if (value) {
-      setAppointment({
-        ...appointment,
-        patientName: value.name || "",
-        patientCNIC: value.cnic || "",
-        patient: value.id || "",
-      });
-    } else {
-      // Clear the patient details if no value is selected
-      setAppointment({
-        ...appointment,
-        patientName: "",
-        patientCNIC: "",
-        patient: "",
-      });
-    }
-  };
   const handleDoctorChange = (event, value) => {
     if (value) {
       setAppointment({
@@ -146,9 +95,23 @@ const ManageAppointments = () => {
     }
   };
 
+  const getAppData = async () => {
+    try {
+      const res = await axios.get("/api/user/appointments");
+      if (res.status === 200) {
+        setApptData(res.data);
+      }
+    } catch (error) {
+      alert(`${error}`);
+    }
+  };
+  useEffect(() => {
+    getAppData();
+  }, []);
+
   const table = useMaterialReactTable({
     columns,
-    data: appointmentsData,
+    data: apptData ? apptData : [],
     enableEditing: true,
     renderEditRowDialogContent: ({ table, row, internalEditComponents }) => (
       <>
