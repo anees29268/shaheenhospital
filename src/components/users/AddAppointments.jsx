@@ -45,7 +45,7 @@ const AddAppointments = () => {
     try {
       const res = await axios.get("/api/user/patients");
       if (res.status === 200) {
-        setPatient(res.data);
+        setPatient(res.data.filter((item) => item.case === "general"));
       }
     } catch (error) {
       alert(`${error}`);

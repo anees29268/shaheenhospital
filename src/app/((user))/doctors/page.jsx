@@ -33,7 +33,7 @@ const Doctors = () => {
         size: 150,
 
         Cell: ({ renderedCellValue, row }) => (
-          <>{dayjs(renderedCellValue).format("D MMM, YYYY h:mm A")}</>
+          <>{dayjs(renderedCellValue).format("h:mm A")}</>
         ),
       },
       {
@@ -42,7 +42,7 @@ const Doctors = () => {
         size: 150,
 
         Cell: ({ renderedCellValue, row }) => (
-          <>{dayjs(renderedCellValue).format("D MMM, YYYY h:mm A")}</>
+          <>{dayjs(renderedCellValue).format("h:mm A")}</>
         ),
       },
       {
@@ -85,7 +85,7 @@ const Doctors = () => {
   }, []);
 
   return (
-    <Stack direction="column" spacing={1} p={1}>
+    <Stack direction="column" spacing={1} p={3}>
       <Box className="global" gap={1}>
         <Tabs
           value={tabIndex}

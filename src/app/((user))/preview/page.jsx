@@ -1,5 +1,6 @@
 "use client";
 
+import { Print } from "@mui/icons-material";
 import {
   Avatar,
   Box,
@@ -41,7 +42,11 @@ const PrintPreviews = ({
     // return <button onClick={() => alert('This will not work')}>Print this out!</button>;
 
     // Good
-    return <button>Print </button>;
+    return (
+      <Button startIcon={<Print />} variant="contained">
+        Print{" "}
+      </Button>
+    );
   }, []);
 
   return (

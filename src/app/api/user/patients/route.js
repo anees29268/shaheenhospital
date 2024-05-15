@@ -66,9 +66,7 @@ export async function GET() {
   try {
     await dbConn();
 
-    const patients = await Patient.find({
-      case: "general",
-    });
+    const patients = await Patient.find();
 
     if (patients) {
       return new NextResponse(JSON.stringify(patients), { status: 200 });
@@ -78,21 +76,18 @@ export async function GET() {
   }
 }
 export async function PUT(req) {
-  const { _id, name, cnic, contact, specialization, desc, address } =
+  const {_id, name,fatherName, fee,cnic, contact,caseType,address } =
     await req.json();
 
   try {
-    const res = await Doctor.findByIdAndUpdate(_id, {
-      name,
-      cnic,
-      contact,
-      specialization,
-      desc,
-      address,
+    const res = await Patient.findByIdAndUpdate(_id, {
+      name,fatherName, cnic, contact,case:caseType,address,fee
+    },{
+      new:true
     });
 
     if (res) {
-      return new NextResponse("Doctor Updated!", { status: 200 });
+      return new NextResponse("Patient Updated!", { status: 200 });
     }
   } catch (error) {
     return new NextResponse(error, { status: 500 });
