@@ -3,7 +3,7 @@ import dbConn from "@/utils/dbConn";
 import { NextResponse } from "next/server";
 
 export async function POST(req) {
-  const { patient, doctor, appointmentDate, fee } = await req.json();
+  const { patient, doctor, appointmentDate, fee, token } = await req.json();
   try {
     await dbConn();
 
@@ -12,6 +12,7 @@ export async function POST(req) {
       doctor,
       appointmentDate,
       fee,
+      token,
     });
     await res.save();
     return new NextResponse("Appointment Done", { status: 201 });

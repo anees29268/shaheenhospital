@@ -1,7 +1,15 @@
 "use client";
 
 import { AddBox } from "@mui/icons-material";
-import { Button, Grid, TextField } from "@mui/material";
+import {
+  Button,
+  FormControl,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+} from "@mui/material";
 import axios from "axios";
 import { useState } from "react";
 
@@ -10,6 +18,7 @@ const AddUsers = () => {
     name: "",
     cnic: "",
     email: "",
+    role: "",
     password: "",
     cPassword: "",
   });
@@ -74,6 +83,28 @@ const AddUsers = () => {
           onChange={(e) => setUser({ ...user, email: e.target.value })}
           placeholder="haris_umar01@gmail.com"
         />
+      </Grid>
+      <Grid item xs={12} md={6}>
+        <FormControl fullWidth>
+          <InputLabel id="demo-simple-select-label">Role</InputLabel>
+          <Select
+            value={user.role}
+            variant="filled"
+            label="Role"
+            onChange={(e) =>
+              setUser({
+                ...user,
+                role: e.target.value,
+              })
+            }
+          >
+            <MenuItem value={""}>
+              <em>None</em>
+            </MenuItem>
+            <MenuItem value={"user"}>User</MenuItem>
+            <MenuItem value={"admin"}>Admin</MenuItem>
+          </Select>
+        </FormControl>
       </Grid>
       <Grid item xs={12} md={6}>
         <TextField

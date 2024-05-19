@@ -15,6 +15,7 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
+import { signOut, useSession } from "next-auth/react";
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -26,8 +27,8 @@ const Header = ({ userName }) => {
   const dispatch = useDispatch();
   const router = useRouter();
   const theme = useTheme();
+  const session = useSession();
 
-  const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
 
   const handleOpenUserMenu = (event) => {
@@ -38,16 +39,10 @@ const Header = ({ userName }) => {
     setAnchorElUser(null);
   };
 
-  function pickCapitalH(str) {
-    // Check if the string starts with 'H'
-    if (str.charAt(0) === "H") {
-      // If it does, return 'H' capitalized
-      return "H";
-    } else {
-      // Otherwise, return an empty string
-      return "";
-    }
-  }
+  const handleLogout = async () => {
+    await signOut();
+    router.push("/");
+  };
 
   return (
     <AppBar
@@ -81,7 +76,9 @@ const Header = ({ userName }) => {
         <Box mr={"50px"}>
           <Tooltip title="Open settings">
             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-              <Avatar alt={userName}>{pickCapitalH(userName)}</Avatar>
+              <Avatar alt={session?.data?.user?.name}>
+                {session?.data?.user?.name?.toUpperCase().charAt(0)}
+              </Avatar>
             </IconButton>
           </Tooltip>
           <Menu
@@ -100,7 +97,7 @@ const Header = ({ userName }) => {
             open={Boolean(anchorElUser)}
             onClose={handleCloseUserMenu}
           >
-            <MenuItem>
+            <MenuItem onClick={() => handleLogout()}>
               <Logout />
               <Typography ml={2} textAlign="center">
                 Logout

@@ -10,8 +10,9 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
+import axios from "axios";
 import dayjs from "dayjs";
-import React, { useCallback, useRef } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import ReactToPrint from "react-to-print";
 
 const PrintPreviews = ({
@@ -26,6 +27,7 @@ const PrintPreviews = ({
   regDate,
   doctor,
   appDate,
+  token,
 }) => {
   const componentRef = useRef(null);
   const handlePrint = () => {};
@@ -190,7 +192,7 @@ const PrintPreviews = ({
               <Box>
                 <Typography variant="h5">TOKEN NO</Typography>
                 <Typography variant="h5" textAlign={"center"} fontWeight={700}>
-                  45
+                  {token}
                 </Typography>
 
                 <div

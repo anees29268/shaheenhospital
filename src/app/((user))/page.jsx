@@ -17,11 +17,12 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import "dayjs/locale/en";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import dayjs from "dayjs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import React, { useCallback, useRef } from "react";
 import ReactToPrint from "react-to-print";
 import PrintPreviews from "./preview/page";
 import axios from "axios";
+import { useSession } from "next-auth/react";
 
 export default function Home() {
   const [record, setRecord] = useState({
@@ -38,19 +39,32 @@ export default function Home() {
     fee: "",
     address: "",
     gender: "",
+    token: "",
   });
+
+  const session = useSession();
+
+  const getToken = async () => {
+    try {
+      const res = await axios.post("/api/user/token", {
+        caseType: "emergency",
+      });
+      if (res.status === 200) {
+        setRecord({
+          ...record,
+          token: res.data + 1,
+        });
+      }
+    } catch (error) {
+      alert(`${error}`);
+    }
+  };
+
+  useEffect(() => {
+    getToken();
+  }, []);
   const handleDateChange = (date) => {
     setRecord({ ...record, date: dayjs(date) });
-  };
-  const componentRef = useRef(null);
-
-  const handlePrint = () => {
-    const content = document.getElementById("print").innerHTML;
-    const printWindow = window.open("", "_blank");
-    printWindow.document.write(content);
-    printWindow.document.close();
-    printWindow.print();
-    printWindow.close();
   };
 
   function identifyGenderFromCNIC(cnic) {
@@ -75,6 +89,8 @@ export default function Home() {
       }
     } catch (error) {
       alert(`${error}`);
+    } finally {
+      getToken();
     }
   };
 
@@ -94,6 +110,7 @@ export default function Home() {
       address: "",
       gender: "",
     });
+    getToken();
   };
   return (
     <Stack direction="column" spacing={1} p={3}>
@@ -103,7 +120,7 @@ export default function Home() {
         color={"text.secondary"}
         className="global"
       >
-        Welcome Imran
+        Welcome {session?.data?.user?.name}
       </Typography>
       <Grid
         container
@@ -337,6 +354,7 @@ export default function Home() {
           age={record.age}
           patientType={record.caseType}
           gender={identifyGenderFromCNIC(record.cnic)}
+          token={record.token == "" ? "" : record.token}
         />
       </Box>
     </Stack>

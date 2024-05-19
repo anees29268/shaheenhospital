@@ -1,7 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { fetchUser } from "./apis";
 
 const initialState = {
   mode: "light",
+  isLoaderLoading: false,
+  user: null,
 };
 
 const Slice = createSlice({
@@ -14,21 +17,22 @@ const Slice = createSlice({
     changeSidebarMode: (state, action) => {
       state.isSidebarOpen = action.payload;
     },
+    changeLoadingLoader: (state) => {
+      state.isLoaderLoading = !state.isLoaderLoading;
+    },
   },
-  // extraReducers: (builder) => {
-  //   builder
-  //     .addCase(fetchUserDetails.pending, (state) => {
-  //       // Handle pending state if needed
-  //     })
-  //     .addCase(fetchUserDetails.fulfilled, (state, action) => {
-  //       state.userDetails = action.payload;
-  //     })
-  //     .addCase(fetchUserDetails.rejected, (state, action) => {
-  //       // Handle rejected state if needed
-  //     });
-  // },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchUser.fulfilled, (state, action) => {
+        state.user = action.payload;
+      })
+      .addCase(fetchUser.rejected, (state, action) => {
+        // Handle rejected state if needed
+      });
+  },
 });
 
-export const { changeMode, changeSidebarMode } = Slice.actions;
+export const { changeMode, changeSidebarMode, changeLoadingLoader } =
+  Slice.actions;
 
 export default Slice.reducer;

@@ -53,6 +53,10 @@ const patientSchema = new mongoose.Schema(
     addedBy: {
       type: String,
     },
+    tokenNo: {
+      type: Number,
+      required: true,
+    },
   },
   {
     timestamps: true,

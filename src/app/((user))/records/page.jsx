@@ -1,12 +1,12 @@
 "use client";
 
 import GeneralRecords from "@/components/users/GeneralRecords";
-import { recordsData } from "@/data/demo";
 import { MedicalServices, Medication, Print } from "@mui/icons-material";
 import {
   Box,
   IconButton,
-  Paper,
+  MenuItem,
+  Select,
   Stack,
   Tab,
   Tabs,
@@ -23,32 +23,64 @@ import PrintPreviews from "../preview/page";
 
 const Records = () => {
   const [tabIndex, setTabIndex] = useState(0);
-
-  const [generalRecords, setGeneralRecords] = useState();
-
-  const [pat, setPat] = useState();
+  const [generalRecords, setGeneralRecords] = useState([]);
+  const [emergencyRecords, setEmergencyRecords] = useState([]);
+  const [allRecords, setAllRecords] = useState([]);
+  const [doctor, setDotor] = useState("");
+  const [pat, setPat] = useState(null);
+  const [apt, setApt] = useState(null);
+  const [allApt, setAllApt] = useState(null);
 
   const handleTabChange = (event, newValue) => {
     setTabIndex(newValue);
   };
 
+  const getPat = async (id, caseType, d) => {
+    if (caseType === "emergency") {
+      setAllApt(null);
+      setApt(null);
+    }
+    try {
+      const res = await axios.post("/api/user/patients/pat", {
+        id,
+        caseType,
+        doctor: d,
+      });
+      if (res.status === 200) {
+        setPat(res.data);
+        if (caseType === "general") {
+          setApt(res.data);
+          setAllApt(res.data);
+        }
+      }
+    } catch (error) {
+      alert(`${error}`);
+    }
+  };
+
   const handlePatPreview = (row) => {
-    const _id = row.original._id;
+    const id = row.original._id;
+    const caseType = row.original.case;
 
-    const newRecord = generalRecords
-      ? generalRecords.find((item) => item._id === _id)
-      : null;
-
-    setPat(newRecord);
+    getPat(id, caseType, doctor);
   };
 
   const columns = useMemo(
     () => [
       {
-        accessorKey: "_id", //access nested data with dot notation
+        accessorKey: "_id",
         header: "ID",
         size: 10,
         enableEditing: false,
+      },
+      {
+        accessorKey: "createdAt",
+        header: "Reg. Date",
+        enableEditing: false,
+        size: 200,
+        Cell: ({ renderedCellValue, row }) => (
+          <>{dayjs(renderedCellValue).format("D MMM, YYYY h:mm A")}</>
+        ),
       },
       {
         accessorKey: "actions",
@@ -61,7 +93,7 @@ const Records = () => {
         ),
       },
       {
-        accessorKey: "cnic", //access nested data with dot notation
+        accessorKey: "cnic",
         header: "CNIC",
         size: 150,
       },
@@ -75,58 +107,37 @@ const Records = () => {
         header: "Father Name",
         size: 100,
       },
-
       {
-        accessorKey: "fee", //normal accessorKey
+        accessorKey: "fee",
         header: "FEE",
         size: 100,
       },
       {
-        accessorKey: "contact", //normal accessorKey
+        accessorKey: "contact",
         header: "Contact",
         size: 100,
       },
       {
-        accessorKey: "caseType", //normal accessorKey
+        accessorKey: "caseType",
         header: "Case Type",
         size: 70,
         editVariant: "select",
         editSelectOptions: ["emergency", "general"],
         Cell: ({ renderedCellValue, row }) => (
-          <i
-            style={{
-              textTransform: "capitalize",
-            }}
-          >
-            {row.original.case}
-          </i>
+          <i style={{ textTransform: "capitalize" }}>{row.original.case}</i>
         ),
       },
       {
-        accessorKey: "bloodGroup", //normal accessorKey
+        accessorKey: "bloodGroup",
         header: "Blood Group",
         size: 50,
         editVariant: "select",
         editSelectOptions: ["A+", "A-", "O+", "O-", "B+", "B-", "AB+", "AB-"],
         Cell: ({ renderedCellValue, row }) => (
-          <i
-            style={{
-              textTransform: "capitalize",
-            }}
-          >
-            {renderedCellValue}
-          </i>
+          <i style={{ textTransform: "capitalize" }}>{renderedCellValue}</i>
         ),
       },
-      {
-        accessorKey: "createdAt", //normal accessorKey
-        header: "Reg. Date",
-        enableEditing: false,
-        size: 200,
-        Cell: ({ renderedCellValue, row }) => (
-          <>{dayjs(renderedCellValue).format("D MMM, YYYY h:mm A")}</>
-        ),
-      },
+
       {
         accessorKey: "address",
         header: "Address",
@@ -139,9 +150,11 @@ const Records = () => {
   const getAllRecords = async () => {
     try {
       const res = await axios.get("/api/user/patients");
-
       if (res.status === 200) {
-        setGeneralRecords(res.data);
+        const data = res.data;
+        setEmergencyRecords(data.filter((item) => item.case === "emergency"));
+        setGeneralRecords(data.filter((item) => item.case === "general"));
+        setAllRecords(data);
       }
     } catch (error) {
       alert(`${error}`);
@@ -162,28 +175,34 @@ const Records = () => {
     } catch (error) {
       alert(`${error}`);
     } finally {
-      table.setEditingRow(null); //exit editing mode
+      table.setEditingRow(null);
+    }
+  };
+
+  const getTableData = () => {
+    if (tabIndex === 0) {
+      return emergencyRecords;
+    } else {
+      return generalRecords;
     }
   };
 
   const table = useMaterialReactTable({
     columns,
-    data: generalRecords ? generalRecords : [],
+    data: getTableData(),
     enableEditing: true,
     onEditingRowSave: handleSaveDoctor,
   });
 
-  function identifyGenderFromCNIC(cnic) {
-    // Extract the last digit of the CNIC number
+  const identifyGenderFromCNIC = (cnic) => {
     const lastDigit = parseInt(cnic[cnic.length - 1]);
+    return lastDigit % 2 === 0 ? "Female" : "Male";
+  };
 
-    // Check if the last digit is even or odd
-    if (lastDigit % 2 === 0) {
-      return "Female";
-    } else {
-      return "Male";
-    }
-  }
+  const handleDoctorChange = (value) => {
+    const data = allApt.filter((item) => item._id === value);
+    setApt(data);
+  };
 
   return (
     <Stack direction="column" spacing={1} p={3}>
@@ -194,33 +213,67 @@ const Records = () => {
           scrollButtons="auto"
           variant="scrollable"
         >
-          <Tab label="All Patients" icon={<MedicalServices />} />
+          <Tab label="Emergency Patients" icon={<MedicalServices />} />
           <Tab label="Appointed Patients" icon={<Medication />} />
         </Tabs>
       </Box>
-      <Box hidden={tabIndex !== 0}>
-        <MaterialReactTable table={table} />
-        <br />
-        <br />
-        {pat ? (
-          <PrintPreviews
-            name={pat.name}
-            father_husband={pat.fatherName}
-            cnic={pat.cnic}
-            gender={identifyGenderFromCNIC(pat.cnic)}
-            age={pat.age}
-            patientType={pat.case}
-            address={pat.address}
-            contact={pat.contact}
-            regDate={pat.regDate}
-          />
-        ) : (
-          <>Waiting for Preview...</>
+      <Box maxWidth={350} hidden={tabIndex !== 1}>
+        {allApt && (
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            value={doctor}
+            label="Select Doctor"
+            sx={{ minWidth: 350 }}
+            onChange={(e) => handleDoctorChange(e.target.value)}
+          >
+            {allApt.map((item, key) => (
+              <MenuItem key={key} value={item._id}>
+                {item.doctor.name}
+              </MenuItem>
+            ))}
+          </Select>
         )}
       </Box>
-      <Box hidden={tabIndex !== 1}>
-        <GeneralRecords />
-      </Box>
+      {allRecords.length > 0 ? (
+        <MaterialReactTable table={table} />
+      ) : (
+        <Typography>Loading records...</Typography>
+      )}
+      <br />
+      <br />
+      {allApt && apt[0].patient.name ? (
+        <PrintPreviews
+          name={apt[0].patient.name}
+          father_husband={apt[0].patient.fatherName}
+          cnic={apt[0].patient.cnic}
+          gender={identifyGenderFromCNIC(apt[0].patient.cnic)}
+          age={apt[0].patient.age}
+          patientType={apt[0].patient.case.toUpperCase()}
+          address={apt[0].patient.address}
+          contact={apt[0].patient.contact}
+          regDate={apt[0].patient.regDate}
+          doctor={apt[0].doctor.name}
+          token={apt[0].token}
+          appDate={apt[0].appointmentDate}
+        />
+      ) : pat ? (
+        <PrintPreviews
+          name={pat.name}
+          father_husband={pat.fatherName}
+          cnic={pat.cnic}
+          gender={identifyGenderFromCNIC(pat.cnic)}
+          age={pat.age}
+          patientType={pat.case.toUpperCase()}
+          address={pat.address}
+          contact={pat.contact}
+          regDate={pat.regDate}
+          doctor={doctor}
+          token={pat.tokenNo}
+        />
+      ) : (
+        <Typography>Waiting for Preview...</Typography>
+      )}
     </Stack>
   );
 };

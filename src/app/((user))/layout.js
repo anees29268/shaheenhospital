@@ -2,6 +2,7 @@ import Wrapper from "@/components/Wrapper";
 import { ReduxProviders } from "@/redux/providers";
 import ThemeRegistry from "@/theme/themeRegistry";
 import "./globals.css";
+import { AuthProvider } from "@/components/globals/Providers";
 
 export const metadata = {
   title: "SH-User",
@@ -11,13 +12,15 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <ReduxProviders>
-        <ThemeRegistry>
-          <body>
-            <Wrapper>{children} </Wrapper>
-          </body>
-        </ThemeRegistry>
-      </ReduxProviders>
+      <AuthProvider>
+        <ReduxProviders>
+          <ThemeRegistry>
+            <body>
+              <Wrapper>{children} </Wrapper>
+            </body>
+          </ThemeRegistry>
+        </ReduxProviders>
+      </AuthProvider>
     </html>
   );
 }

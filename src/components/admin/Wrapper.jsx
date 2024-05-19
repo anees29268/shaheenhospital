@@ -41,6 +41,7 @@ import { doctorsData } from "@/data/demo";
 import Header from "./Header";
 import SidebarHeading from "./SidebarHeading";
 import { doctorMenu } from "@/data/siderbars";
+import { useSession } from "next-auth/react";
 
 export default function Wrapper({ children }) {
   const theme = useTheme();
@@ -50,6 +51,7 @@ export default function Wrapper({ children }) {
   const dispatch = useDispatch();
   const router = useRouter();
   const loading = false;
+  const session = useSession();
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>

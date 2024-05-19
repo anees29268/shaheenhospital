@@ -16,42 +16,59 @@ export async function POST(req) {
     fee,
     contact,
     address,
+    token,
   } = await req.json();
-  console.log(
-    date,
-    cnic,
-    name,
-    fatherName,
-    gender,
-    nationality,
-    bloodGroup,
-    age,
-    caseType,
-    fee,
-    contact,
-    address
-  );
+
   try {
-    if (!date || !name || !fatherName || !gender || !age || !caseType || !fee) {
+    if (
+      !date ||
+      !token ||
+      !name ||
+      !fatherName ||
+      !gender ||
+      !age ||
+      !caseType ||
+      !fee
+    ) {
       return new NextResponse("Fields Missing", { status: 400 });
     }
     await dbConn();
-    const patient = await Patient({
-      date,
-      cnic,
-      name,
-      fatherName,
-      gender,
-      nationality,
-      bloodGroup,
-      age,
-      case: caseType,
-      fee,
-      contact,
-      address,
-
-      addedBy: "Test",
-    });
+    let patient;
+    if (caseType === "emergency") {
+      patient = await Patient({
+        date,
+        cnic,
+        name,
+        fatherName,
+        gender,
+        nationality,
+        bloodGroup,
+        age,
+        case: caseType,
+        fee,
+        contact,
+        address,
+        tokenNo: token,
+        addedBy: "Test",
+      });
+    } else {
+      patient = await Patient({
+        date,
+        cnic,
+        name,
+        fatherName,
+        gender,
+        nationality,
+        bloodGroup,
+        age,
+        case: caseType,
+        fee,
+        contact,
+        address,
+        tokenNo: 0,
+        addedBy: "Test",
+      });
+    }
 
     const res = await patient.save();
 
@@ -76,15 +93,25 @@ export async function GET() {
   }
 }
 export async function PUT(req) {
-  const {_id, name,fatherName, fee,cnic, contact,caseType,address } =
+  const { _id, name, fatherName, fee, cnic, contact, caseType, address } =
     await req.json();
 
   try {
-    const res = await Patient.findByIdAndUpdate(_id, {
-      name,fatherName, cnic, contact,case:caseType,address,fee
-    },{
-      new:true
-    });
+    const res = await Patient.findByIdAndUpdate(
+      _id,
+      {
+        name,
+        fatherName,
+        cnic,
+        contact,
+        case: caseType,
+        address,
+        fee,
+      },
+      {
+        new: true,
+      }
+    );
 
     if (res) {
       return new NextResponse("Patient Updated!", { status: 200 });

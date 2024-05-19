@@ -9,8 +9,8 @@ import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 
 const AddAppointments = () => {
-  const [patient, setPatient] = useState();
-  const [doctor, setDoctor] = useState();
+  const [patient, setPatient] = useState([]);
+  const [doctor, setDoctor] = useState([]);
 
   const [appointment, setAppointment] = useState({
     patient: "",
@@ -21,26 +21,52 @@ const AddAppointments = () => {
     doctorName: "",
     appointmentDate: dayjs(new Date()),
     fee: "",
+    token: "",
   });
 
   const handlePatientChange = (event, value) => {
     if (value) {
-      setAppointment({
-        ...appointment,
+      setAppointment((prevAppointment) => ({
+        ...prevAppointment,
         patientName: value.name || "",
         patientCNIC: value.cnic || "",
         patient: value._id || "",
-      });
+      }));
     } else {
       // Clear the patient details if no value is selected
-      setAppointment({
-        ...appointment,
+      setAppointment((prevAppointment) => ({
+        ...prevAppointment,
         patientName: "",
         patientCNIC: "",
         patient: "",
-      });
+      }));
     }
   };
+
+  const handleDoctorChange = (event, value) => {
+    if (value) {
+      setAppointment((prevAppointment) => ({
+        ...prevAppointment,
+        doctorName: value.name || "",
+        doctor: value._id || "",
+      }));
+    } else {
+      // Clear the doctor details if no value is selected
+      setAppointment((prevAppointment) => ({
+        ...prevAppointment,
+        doctorName: "",
+        doctor: "",
+      }));
+    }
+  };
+
+  const handleAppointmentDateChange = (date) => {
+    setAppointment((prevAppointment) => ({
+      ...prevAppointment,
+      appointmentDate: dayjs(date),
+    }));
+  };
+
   const getPatients = async () => {
     try {
       const res = await axios.get("/api/user/patients");
@@ -51,6 +77,7 @@ const AddAppointments = () => {
       alert(`${error}`);
     }
   };
+
   const getDoctors = async () => {
     try {
       const res = await axios.get("/api/user/doctor");
@@ -62,52 +89,36 @@ const AddAppointments = () => {
     }
   };
 
-  const getPatientData = (id) => {
-    if (id) {
-      const p = patient.filter((item) => item._id === id);
-      return p;
-    } else {
-      return null;
+  const getToken = async () => {
+    if (!appointment.doctor) {
+      return;
+    }
+    try {
+      const res = await axios.post("/api/user/token/aptToken", {
+        doctorId: appointment.doctor,
+        appointmentDate: appointment.appointmentDate,
+      });
+      if (res.status === 200) {
+        setAppointment((prevAppointment) => ({
+          ...prevAppointment,
+          token: res.data + 1,
+        }));
+      }
+    } catch (error) {
+      alert(`${error}`);
     }
   };
-
-  function identifyGenderFromCNIC(cnic) {
-    // Extract the last digit of the CNIC number
-    const lastDigit = parseInt(cnic[cnic.length - 1]);
-
-    // Check if the last digit is even or odd
-    if (lastDigit % 2 === 0) {
-      return "Female";
-    } else {
-      return "Male";
-    }
-  }
 
   useEffect(() => {
     getPatients();
     getDoctors();
   }, []);
 
-  const handleDoctorChange = (event, value) => {
-    if (value) {
-      setAppointment({
-        ...appointment,
-        doctorName: value.name || "",
-        doctor: value._id || "",
-      });
-    } else {
-      // Clear the patient details if no value is selected
-      setAppointment({
-        ...appointment,
-        doctorName: "",
-        doctor: "",
-      });
+  useEffect(() => {
+    if (appointment.doctor) {
+      getToken();
     }
-  };
-
-  const handleAppointmentDateChange = (date) => {
-    setAppointment({ ...appointment, appointmentDate: dayjs(date) });
-  };
+  }, [appointment.doctor, appointment.appointmentDate]);
 
   const handleAppointmentSubmit = async (e) => {
     e.preventDefault();
@@ -116,10 +127,29 @@ const AddAppointments = () => {
         const res = await axios.post("/api/user/appointments", appointment);
         if (res.status === 201) {
           alert("Appointment Done");
+          // setAppointment({
+          //   patient: "",
+          //   patientName: "",
+          //   patientCNIC: "",
+          //   appointment: "",
+          //   doctor: "",
+          //   doctorName: "",
+          //   appointmentDate: dayjs(new Date()),
+          //   fee: "",
+          //   token: "",
+          // });
         }
       } catch (error) {
         alert(`${error}`);
       }
+    }
+  };
+
+  const getPatientData = (id) => {
+    if (id) {
+      return patient.filter((item) => item._id === id);
+    } else {
+      return null;
     }
   };
 
@@ -136,7 +166,7 @@ const AddAppointments = () => {
           <Autocomplete
             options={patient}
             getOptionLabel={(option) => `${option.name}-${option.cnic}` || ""}
-            value={patient.find((p) => p.id === appointment.patient)}
+            value={patient.find((p) => p._id === appointment.patient)}
             onChange={handlePatientChange}
             renderInput={(params) => (
               <TextField
@@ -156,7 +186,7 @@ const AddAppointments = () => {
           <Autocomplete
             options={doctor}
             getOptionLabel={(option) => `${option.name}` || ""}
-            value={doctor.find((p) => p.id === appointment.doctor)}
+            value={doctor.find((p) => p._id === appointment.doctor)}
             onChange={handleDoctorChange}
             renderInput={(params) => (
               <TextField
@@ -197,11 +227,11 @@ const AddAppointments = () => {
           }
         />
       </Grid>
-      {/* <Grid item xs={12} sm={6} mt={3}>
+      <Grid item xs={12} sm={6} mt={3}>
         <Button type="submit" variant="contained">
           Submit
         </Button>
-      </Grid> */}
+      </Grid>
       <Grid item xs={12} mt={3}>
         {appointment.patient !== "" ? (
           <PrintPreviews
@@ -209,7 +239,7 @@ const AddAppointments = () => {
             father_husband={getPatientData(appointment.patient)[0].fatherName}
             regDate={getPatientData(appointment.patient)[0].createdAt}
             cnic={getPatientData(appointment.patient)[0].cnic}
-            bloodGroup={getPatientData(appointment.patient)[0].name}
+            bloodGroup={getPatientData(appointment.patient)[0].bloodGroup}
             contact={getPatientData(appointment.patient)[0].contact}
             address={getPatientData(appointment.patient)[0].address}
             age={getPatientData(appointment.patient)[0].age}
@@ -219,6 +249,7 @@ const AddAppointments = () => {
             gender={getPatientData(appointment.patient)[0].gender}
             doctor={appointment.doctorName ? appointment.doctorName : null}
             appDate={appointment.appointmentDate}
+            token={appointment.token === "" ? "" : appointment.token}
           />
         ) : (
           <>loading..</>

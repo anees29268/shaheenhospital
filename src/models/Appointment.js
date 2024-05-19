@@ -22,6 +22,10 @@ const appointmentSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    token: {
+      type: Number,
+      required: true,
+    },
   },
   {
     timestamps: true,

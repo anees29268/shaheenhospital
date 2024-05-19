@@ -39,6 +39,8 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import Header from "./Header";
 import { userMenu } from "@/data/siderbars";
 import SidebarHeading from "./SidebarHeading";
+import { useEffect } from "react";
+import { useSession } from "next-auth/react";
 
 export default function Wrapper({ children }) {
   const theme = useTheme();
@@ -47,7 +49,8 @@ export default function Wrapper({ children }) {
 
   const dispatch = useDispatch();
   const router = useRouter();
-  const loading = false;
+  const session = useSession();
+  const loading = useSelector((data) => data.isLoaderLoading);
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -67,35 +70,37 @@ export default function Wrapper({ children }) {
           }}
         >
           {/* Sidebar */}
-
-          <Drawer
-            variant={match ? "temporary" : "permanent"}
-            open={sidebar}
-            onClose={() => dispatch(changeSidebarMode(!sidebar))}
-          >
-            <Stack
-              direction={"column"}
-              spacing={1}
-              width={250}
-              sx={{
-                bgcolor: theme.palette.mainAccent[300],
-                height: "100%",
-              }}
+          {session?.data && (
+            <Drawer
+              variant={match ? "temporary" : "permanent"}
+              open={sidebar}
+              onClose={() => dispatch(changeSidebarMode(!sidebar))}
             >
-              <SidebarHeading type={"USER"} />
-              <Divider />
-              <List>
-                {userMenu.map((item, key) => (
-                  <ListItem disablePadding key={key}>
-                    <ListItemButton onClick={() => router.push(item.url)}>
-                      <ListItemIcon>{item.icon}</ListItemIcon>
-                      <ListItemText primary={item.title} />
-                    </ListItemButton>
-                  </ListItem>
-                ))}
-              </List>
-            </Stack>
-          </Drawer>
+              <Stack
+                direction={"column"}
+                spacing={1}
+                width={250}
+                sx={{
+                  bgcolor: theme.palette.mainAccent[300],
+                  height: "100%",
+                }}
+              >
+                <SidebarHeading type={"USER"} />
+                <Divider />
+                <List>
+                  {userMenu.map((item, key) => (
+                    <ListItem disablePadding key={key}>
+                      <ListItemButton onClick={() => router.push(item.url)}>
+                        <ListItemIcon>{item.icon}</ListItemIcon>
+                        <ListItemText primary={item.title} />
+                      </ListItemButton>
+                    </ListItem>
+                  ))}
+                </List>
+              </Stack>
+            </Drawer>
+          )}
+
           <Stack
             direction={"column"}
             spacing={1}
@@ -103,7 +108,7 @@ export default function Wrapper({ children }) {
               height: "100%",
               minHeight: "100vh",
               overflowX: "hidden",
-              ml: match ? "0px" : "250px",
+              ml: match ? "0px" : !session?.data ? "0px" : "250px",
             }}
           >
             {/* Header */}

@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 
 export async function POST(req) {
-  const { name, cnic, email, password } = await req.json();
+  const { name, cnic, role, email, password } = await req.json();
 
   try {
     if (!name || !cnic || !email || !password) {
@@ -18,6 +18,7 @@ export async function POST(req) {
       cnic,
       email,
       password: secPass,
+      role,
     });
 
     const res = await user.save();
@@ -70,7 +71,6 @@ export async function DELETE(request) {
     const res = await User.deleteOne({ _id });
 
     if (res) {
-      console.log(res);
       return new NextResponse("User Deleted!", { status: 200 });
     }
   } catch (error) {
