@@ -150,6 +150,7 @@ export default function Home() {
             fullWidth
             value={record.cnic}
             variant="filled"
+            required
             label="CNIC"
             placeholder="1530287569081"
             onChange={(e) =>

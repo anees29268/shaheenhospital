@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import Fee from "@/models/Fee";
 
 import dbConn from "@/utils/dbConn";
+import { getServerSession } from "next-auth";
+import User from "@/models/User";
 
 export async function GET() {
   try {
@@ -44,8 +46,18 @@ export async function POST(req) {
 }
 export async function DELETE(request) {
   const { _id } = await request.json();
+  const session = await getServerSession();
 
   try {
+    const email = session.user.email;
+    const user = await User.findOne({ email });
+
+    if (user.role !== "admin") {
+      return new NextResponse("Not allowed for USERS!", {
+        status: 401,
+      });
+    }
+
     const res = await Fee.deleteOne({ _id });
 
     if (res) {

@@ -14,7 +14,7 @@ const Appointments = () => {
   };
 
   return (
-    <Stack direction="column" spacing={1} p={1}>
+    <Stack direction="column" spacing={1} p={3}>
       <Box className="global" gap={1}>
         <Tabs
           value={tabIndex}

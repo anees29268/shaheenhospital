@@ -4,7 +4,6 @@ import { NextResponse } from "next/server";
 
 export async function POST(req) {
   const { doctorId, appointmentDate } = await req.json();
-  console.log(doctorId, appointmentDate);
 
   try {
     if (!appointmentDate) {

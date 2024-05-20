@@ -47,10 +47,11 @@ const Records = () => {
         doctor: d,
       });
       if (res.status === 200) {
-        setPat(res.data);
         if (caseType === "general") {
           setApt(res.data);
           setAllApt(res.data);
+        } else {
+          setPat(res.data);
         }
       }
     } catch (error) {
@@ -195,7 +196,8 @@ const Records = () => {
   });
 
   const identifyGenderFromCNIC = (cnic) => {
-    const lastDigit = parseInt(cnic[cnic.length - 1]);
+    let cnicStr = cnic.toString();
+    const lastDigit = parseInt(cnicStr[cnicStr.length - 1]);
     return lastDigit % 2 === 0 ? "Female" : "Male";
   };
 

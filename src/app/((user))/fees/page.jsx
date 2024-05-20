@@ -187,12 +187,15 @@ const User_Fees = () => {
     const data = row.original;
     try {
       const res = await axios.delete("/api/user/fees", { data });
-      if (res.status === 200) {
+      if (res.status === 401) {
+        console.log("401");
+        alert(`${res.data}`);
+      } else if (res.status === 200) {
         alert("Fee Deleted");
         getFeesDetails();
       }
     } catch (error) {
-      alert(`${error}`);
+      alert(`${error.response.data}`);
     }
   };
 

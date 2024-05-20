@@ -1,7 +1,14 @@
 "use client";
 
 import PrintPreviews from "@/app/((user))/preview/page";
-import { Autocomplete, Button, Grid, TextField } from "@mui/material";
+import {
+  Autocomplete,
+  Button,
+  Grid,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { DatePicker, DateTimePicker } from "@mui/x-date-pickers";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import axios from "axios";
@@ -23,6 +30,8 @@ const AddAppointments = () => {
     fee: "",
     token: "",
   });
+
+  const [doctorTiming, setDoctorTiming] = useState();
 
   const handlePatientChange = (event, value) => {
     if (value) {
@@ -57,6 +66,7 @@ const AddAppointments = () => {
         doctorName: "",
         doctor: "",
       }));
+      setDoctorTiming();
     }
   };
 
@@ -108,6 +118,19 @@ const AddAppointments = () => {
       alert(`${error}`);
     }
   };
+  const getDoctorTiming = async () => {
+    if (appointment.doctor === "") {
+      return;
+    }
+    try {
+      const res = await axios.get(`/api/admin/timing/${appointment.doctor}`);
+      if (res.status === 200) {
+        setDoctorTiming(res.data);
+      }
+    } catch (error) {
+      alert(`${error}`);
+    }
+  };
 
   useEffect(() => {
     getPatients();
@@ -116,6 +139,7 @@ const AddAppointments = () => {
 
   useEffect(() => {
     if (appointment.doctor) {
+      getDoctorTiming();
       getToken();
     }
   }, [appointment.doctor, appointment.appointmentDate]);
@@ -140,7 +164,7 @@ const AddAppointments = () => {
           // });
         }
       } catch (error) {
-        alert(`${error}`);
+        alert(`${error.response.data}`);
       }
     }
   };
@@ -161,6 +185,19 @@ const AddAppointments = () => {
       component={"form"}
       onSubmit={handleAppointmentSubmit}
     >
+      <Grid item xs={12} className="global" mt={3} mb={1}>
+        {doctorTiming ? (
+          <Stack direction={"column"}>
+            <Typography variant="body1" fontWeight={700} textAlign={"center"}>
+              {dayjs(doctorTiming.startTime).format("h:mm A")}-
+              {dayjs(doctorTiming.endTime).format("h:mm A")}
+            </Typography>
+            <Typography variant="body1" fontWeight={700}>
+              {doctorTiming.daysOfWeek.toString()}
+            </Typography>
+          </Stack>
+        ) : null}
+      </Grid>
       <Grid item xs={12} sm={6}>
         {patient ? (
           <Autocomplete
@@ -201,6 +238,7 @@ const AddAppointments = () => {
           <>loading...</>
         )}
       </Grid>
+
       <Grid item xs={12} sm={6}>
         <DemoContainer components={["DatePicker", "DateTimePicker"]}>
           <DateTimePicker
@@ -221,6 +259,7 @@ const AddAppointments = () => {
           placeholder="1500"
           label="FEE"
           variant="filled"
+          required
           type="number"
           onChange={(e) =>
             setAppointment({ ...appointment, fee: e.target.value })
