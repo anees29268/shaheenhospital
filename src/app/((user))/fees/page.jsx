@@ -20,11 +20,13 @@ import {
   useMaterialReactTable,
 } from "material-react-table";
 import { useEffect, useMemo, useState } from "react";
+import FeesPrintPreviews from "../fees-preview/page";
 
 const User_Fees = () => {
   const [patient, setPatient] = useState();
   const [payment, setPayment] = useState();
   const [getFees, setGetFees] = useState();
+  const [pat, setPat] = useState();
 
   const [tabIndex, setTabIndex] = useState(0);
 
@@ -85,6 +87,7 @@ const User_Fees = () => {
 
         patient: value || "",
       });
+      setPat(value || "");
     } else {
       // Clear the patient details if no value is selected
       setFee({
@@ -330,6 +333,22 @@ const User_Fees = () => {
       <Box hidden={tabIndex !== 1}>
         <MaterialReactTable table={table} />
       </Box>
+      {pat ? (
+        <FeesPrintPreviews
+          name={pat.name}
+          token={pat._id}
+          patientType={pat.case}
+          father_husband={pat.fatherName}
+          payment={fee.payment.title}
+          amount={fee.amount}
+          discount={fee.discount}
+          address={pat.address}
+          total={fee.amount - fee.discount}
+          contact={pat.contact}
+          age={pat.age}
+          cnic={pat.cnic}
+        />
+      ) : null}
     </Stack>
   );
 };

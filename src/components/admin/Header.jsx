@@ -1,7 +1,7 @@
 "use client";
 
 import { changeSidebarMode } from "@/redux/slice";
-import { Logout, Menu as MenuIcon } from "@mui/icons-material";
+import { Logout, Menu as MenuIcon, Navigation } from "@mui/icons-material";
 import {
   AppBar,
   Avatar,
@@ -103,6 +103,14 @@ const Header = ({ userName }) => {
                 Logout
               </Typography>
             </MenuItem>
+            {session?.data?.user?.role === "admin" ? (
+              <MenuItem onClick={() => router.push("/")}>
+                <Navigation />
+                <Typography ml={2} textAlign="center">
+                  User Side
+                </Typography>
+              </MenuItem>
+            ) : null}
           </Menu>
         </Box>
       </Toolbar>

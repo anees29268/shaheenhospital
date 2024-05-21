@@ -15,24 +15,17 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  IconButton,
   Paper,
   TextField,
+  Tooltip,
 } from "@mui/material";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { DateTimePicker } from "@mui/x-date-pickers";
 import axios from "axios";
+import { Delete } from "@mui/icons-material";
 
 const ManageAppointments = () => {
-  const [appointment, setAppointment] = useState({
-    patient: "-",
-    patientName: "-",
-    patientCNIC: "-",
-    appointment: "-",
-    doctor: "-",
-    doctorName: "-",
-    appointmentDate: dayjs(new Date()),
-    fee: "-",
-  });
   const [apptData, setApptData] = useState();
   const columns = useMemo(
     () => [
@@ -74,27 +67,6 @@ const ManageAppointments = () => {
   //   "DD MMMM, YYYY hh:mm A"
   // )}`,
 
-  const handleAppointmentDateChange = (date) => {
-    setAppointment({ ...appointment, appointmentDate: dayjs(date) });
-  };
-
-  const handleDoctorChange = (event, value) => {
-    if (value) {
-      setAppointment({
-        ...appointment,
-        doctorName: value.name || "",
-        doctor: value.id || "",
-      });
-    } else {
-      // Clear the patient details if no value is selected
-      setAppointment({
-        ...appointment,
-        doctorName: "",
-        doctor: "",
-      });
-    }
-  };
-
   const getAppData = async () => {
     try {
       const res = await axios.get("/api/user/appointments");
@@ -109,50 +81,33 @@ const ManageAppointments = () => {
     getAppData();
   }, []);
 
+  const handleAptDelete = async (row) => {
+    const data = row.original;
+    try {
+      const _id = row.original._id;
+      const res = await axios.delete("/api/user/appointments", { data });
+      if (res.status === 200) {
+        alert(res.data);
+      }
+    } catch (error) {
+      alert(`${error.response.data}`);
+    } finally {
+      getAppData();
+    }
+  };
+
   const table = useMaterialReactTable({
     columns,
     data: apptData ? apptData : [],
     enableEditing: true,
-    renderEditRowDialogContent: ({ table, row, internalEditComponents }) => (
-      <>
-        <DialogTitle variant="h6">Edit User</DialogTitle>
-        <DialogContent
-          sx={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}
-        >
-          <Autocomplete
-            options={doctors}
-            getOptionLabel={(option) => `${option.name}` || ""}
-            value={
-              appointment.doctor === "-"
-                ? doctors.find((p) => p.name === row.original.doctor)
-                : doctors.find((p) => p.id === appointment.doctor)
-            }
-            onChange={handleDoctorChange}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Choose Doctor"
-                variant="filled"
-                fullWidth
-              />
-            )}
-          />
-          <DemoContainer components={["DatePicker", "DateTimePicker"]}>
-            <DateTimePicker
-              label="Appointment Date"
-              value={appointment.appointmentDate}
-              onChange={handleAppointmentDateChange}
-              sx={{
-                width: "100%",
-              }}
-              format="DD MMMM, YYYY hh:mm A"
-            />
-          </DemoContainer>
-        </DialogContent>
-        <DialogActions>
-          <MRT_EditActionButtons variant="text" table={table} row={row} />
-        </DialogActions>
-      </>
+    renderRowActions: ({ row, table }) => (
+      <Box sx={{ display: "flex", gap: "1rem" }}>
+        <Tooltip title="Delete">
+          <IconButton color="error" onClick={() => handleAptDelete(row)}>
+            <Delete />
+          </IconButton>
+        </Tooltip>
+      </Box>
     ),
   });
   return (

@@ -3,6 +3,8 @@ import dbConn from "@/utils/dbConn";
 import { NextResponse } from "next/server";
 import Timing from "@/models/Timing";
 import mongoose from "mongoose";
+import { getServerSession } from "next-auth";
+import User from "@/models/User";
 
 export async function POST(req) {
   const { patient, doctor, appointmentDate, fee, token } = await req.json();
@@ -98,5 +100,31 @@ export async function GET(req) {
     return new NextResponse(error, {
       status: 500,
     });
+  }
+}
+export async function DELETE(req) {
+  const { _id } = await req.json();
+
+  const session = await getServerSession();
+
+  try {
+    await dbConn();
+    const email = session.user.email;
+    const user = await User.findOne({ email });
+
+    if (user.role !== "admin") {
+      return new NextResponse("Not allowed for USERS!", {
+        status: 401,
+      });
+    }
+    const res = await Appointment.deleteOne({ _id });
+
+    if (res) {
+      return new NextResponse("Appointment Deleted Successfully!", {
+        status: 200,
+      });
+    }
+  } catch (error) {
+    return new NextResponse(error, { status: 500 });
   }
 }
