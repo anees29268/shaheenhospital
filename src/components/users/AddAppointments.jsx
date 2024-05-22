@@ -1,9 +1,11 @@
 "use client";
 
 import PrintPreviews from "@/app/((user))/preview/page";
+import { CalendarViewDay, LockClock } from "@mui/icons-material";
 import {
   Autocomplete,
   Button,
+  Chip,
   Grid,
   Stack,
   TextField,
@@ -187,14 +189,25 @@ const AddAppointments = () => {
     >
       <Grid item xs={12} className="global" mt={3} mb={1}>
         {doctorTiming ? (
-          <Stack direction={"column"}>
-            <Typography variant="body1" fontWeight={700} textAlign={"center"}>
-              {dayjs(doctorTiming.startTime).format("h:mm A")}-
-              {dayjs(doctorTiming.endTime).format("h:mm A")}
-            </Typography>
-            <Typography variant="body1" fontWeight={700}>
-              {doctorTiming.daysOfWeek.toString()}
-            </Typography>
+          <Stack direction={"column"} spacing={2}>
+            <Stack direction="row" spacing={2}>
+              <Chip
+                color="success"
+                icon={<LockClock />}
+                label={`${dayjs(doctorTiming.startTime).format("h:mm A")}`}
+              />
+              <Chip
+                color="success"
+                icon={<LockClock />}
+                label={`${dayjs(doctorTiming.endTime).format("h:mm A")}`}
+              />
+            </Stack>
+            <Chip
+              color="secondary"
+              variant="outlined"
+              icon={<CalendarViewDay />}
+              label={`${doctorTiming.daysOfWeek.toString()}`}
+            />
           </Stack>
         ) : null}
       </Grid>
