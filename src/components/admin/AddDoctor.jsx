@@ -1,7 +1,15 @@
 "use client";
 
 import { AddBox } from "@mui/icons-material";
-import { Button, Grid, TextField } from "@mui/material";
+import {
+  Button,
+  FormControl,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+} from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import axios from "axios";
@@ -17,6 +25,7 @@ const AddDoctor = () => {
     specialization: "",
     desc: "",
     address: "",
+    status: "",
     hiringDate: dayjs(new Date()),
   });
 
@@ -38,6 +47,7 @@ const AddDoctor = () => {
           specialization: "",
           desc: "",
           address: "",
+          status: "",
           hiringDate: dayjs(new Date()),
         });
       }
@@ -135,6 +145,26 @@ const AddDoctor = () => {
         </DemoContainer>
       </Grid>
       <Grid item xs={12} md={6} mt={1}>
+        <FormControl fullWidth variant="filled">
+          <InputLabel id="demo-simple-select-label">Status</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            value={doctor.status}
+            label="Status"
+            onChange={(e) =>
+              setDoctor({
+                ...doctor,
+                status: e.target.value,
+              })
+            }
+          >
+            <MenuItem value={"active"}>Active</MenuItem>
+            <MenuItem value={"non-active"}>Non-Active</MenuItem>
+          </Select>
+        </FormControl>
+      </Grid>
+      <Grid item xs={12} md={6} mt={1}>
         <TextField
           label="Address"
           variant="filled"
@@ -144,6 +174,7 @@ const AddDoctor = () => {
           placeholder="Karak, KPK"
         />
       </Grid>
+
       <Grid item xs={12}>
         <TextField
           label="Description"

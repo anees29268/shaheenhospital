@@ -179,7 +179,11 @@ const User_Fees = () => {
         header: "Net Amount",
         size: 150,
         Cell: ({ renderedCellValue, row }) => (
-          <>{row.original.paymentId.amount - renderedCellValue}</>
+          <>
+            {row.original.paymentId
+              ? row.original.paymentId.amount - renderedCellValue
+              : 0}
+          </>
         ),
       },
     ],

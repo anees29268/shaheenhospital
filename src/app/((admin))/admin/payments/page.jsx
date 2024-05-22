@@ -2,7 +2,14 @@
 
 import AddPayment from "@/components/admin/AddPayment";
 import ManagePayments from "@/components/admin/ManagePayments";
-import { MoneyOffCsred, Payment } from "@mui/icons-material";
+import AddPaymentCat from "@/components/admin/payment-category/AddPaymentCat";
+import ManagePaymentCat from "@/components/admin/payment-category/ManagePaymentCat";
+import {
+  CategoryOutlined,
+  MoneyOffCsred,
+  Payment,
+  SettingsAccessibility,
+} from "@mui/icons-material";
 import { Box, Stack, Tab, Tabs } from "@mui/material";
 import { useState } from "react";
 
@@ -23,6 +30,8 @@ const Admin_Payments = () => {
         >
           <Tab label="Add Payment" icon={<Payment />} />
           <Tab label="Manage Payments" icon={<MoneyOffCsred />} />
+          <Tab label="Payment Category" icon={<CategoryOutlined />} />
+          <Tab label="Manage Categories" icon={<SettingsAccessibility />} />
         </Tabs>
       </Box>
       <Box hidden={tabIndex !== 0}>
@@ -30,6 +39,12 @@ const Admin_Payments = () => {
       </Box>
       <Box hidden={tabIndex !== 1}>
         <ManagePayments />
+      </Box>
+      <Box hidden={tabIndex !== 2}>
+        <AddPaymentCat />
+      </Box>
+      <Box hidden={tabIndex !== 3}>
+        <ManagePaymentCat />
       </Box>
     </Stack>
   );

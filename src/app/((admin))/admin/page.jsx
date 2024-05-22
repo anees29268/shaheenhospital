@@ -1,11 +1,31 @@
 "use client";
 
+import MainCard from "@/components/admin/dashboard/MainCard";
 import Headings from "@/components/globals/Headings";
 import { Avatar, Box, Divider, Stack, Typography } from "@mui/material";
+import axios from "axios";
 import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
 
 const Dashboard = () => {
   const session = useSession();
+
+  const [mainData, setMainData] = useState();
+
+  const getMainData = async () => {
+    try {
+      const res = await axios.get("/api/admin/dashboard");
+      if (res.status === 200) {
+        setMainData(res.data);
+      }
+    } catch (error) {
+      alert(`${error}`);
+    }
+  };
+
+  useEffect(() => {
+    getMainData();
+  }, []);
 
   return (
     <Stack direction={"column"} p={3} spacing={3}>
@@ -14,56 +34,31 @@ const Dashboard = () => {
       </Typography>
 
       <Box display={"flex"} gap={2}>
-        <Box
-          display={"flex"}
-          flexDirection={"column"}
-          p={2}
-          alignItems={"center"}
-          gap={1}
-          sx={{
-            background: "linear-gradient(to right, #02aab0, #00cdac);",
-            borderRadius: 1,
-            minWidth: 200,
-          }}
-        >
-          <Avatar
-            src="/assets/doctors/doctors.png"
-            variant="square"
-            sx={{
-              height: 80,
-              width: 80,
-            }}
-          />
-          <Typography variant="h6">Total Doctors</Typography>
-          <Typography variant="h6" fontWeight={700}>
-            6
-          </Typography>
-        </Box>
-        <Box
-          display={"flex"}
-          flexDirection={"column"}
-          p={2}
-          alignItems={"center"}
-          gap={1}
-          sx={{
-            background: "linear-gradient(to right, #02aab0, #00cdac);",
-            borderRadius: 1,
-            minWidth: 200,
-          }}
-        >
-          <Avatar
-            src="/assets/doctors/users.png"
-            variant="square"
-            sx={{
-              height: 80,
-              width: 80,
-            }}
-          />
-          <Typography variant="h6">Total Users</Typography>
-          <Typography variant="h6" fontWeight={700}>
-            2
-          </Typography>
-        </Box>
+        <MainCard
+          title={"Total Doctors"}
+          amt={mainData && mainData.totalDoctor}
+          src={"/assets/doctors/doctors.png"}
+        />
+        <MainCard
+          title={"Total Users"}
+          amt={mainData && mainData.totalUsers}
+          src={"/assets/doctors/users.png"}
+        />
+        <MainCard
+          title={"Total Patients"}
+          amt={mainData && mainData.totalPatients}
+          src={"/assets/patients/patients.png"}
+        />
+        <MainCard
+          title={"Emergency Patients"}
+          amt={mainData && mainData.emergencyPatients}
+          src={"/assets/patients/emergencyPatient.png"}
+        />
+        <MainCard
+          title={"General Patients"}
+          amt={mainData && mainData.generalPatients}
+          src={"/assets/patients/generalPatient.png"}
+        />
       </Box>
       <Divider />
       <Headings title={"Today Sales"} />

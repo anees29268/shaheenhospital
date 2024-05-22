@@ -13,6 +13,7 @@ export async function POST(req) {
     desc,
     address,
     hiringDate,
+    status,
   } = await req.json();
 
   try {
@@ -31,6 +32,7 @@ export async function POST(req) {
       desc,
       address,
       hiringDate,
+      status,
     });
 
     const res = await doctor.save();
@@ -56,7 +58,7 @@ export async function GET() {
   }
 }
 export async function PUT(req) {
-  const { _id, name, cnic, contact, specialization, desc, address } =
+  const { _id, name, cnic, contact, specialization, status, desc, address } =
     await req.json();
 
   try {
@@ -66,6 +68,7 @@ export async function PUT(req) {
       contact,
       specialization,
       desc,
+      status,
       address,
     });
 

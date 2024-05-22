@@ -65,6 +65,13 @@ const ManageDoctors = () => {
         ),
       },
       {
+        accessorKey: "status", //access nested data with dot notation
+        header: "Status",
+        size: 150,
+        editVariant: "select",
+        editSelectOptions: ["active", "non-active"],
+      },
+      {
         accessorKey: "cnic", //access nested data with dot notation
         header: "CNIC",
         size: 150,

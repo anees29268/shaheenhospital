@@ -1,25 +1,25 @@
 "use client";
 
-import { Box, Button, Grid, TextField } from "@mui/material";
+import { Box, Button, Grid, Stack, TextField } from "@mui/material";
 import axios from "axios";
 import { useState } from "react";
 
-const AddPayment = () => {
-  const [record, setRecord] = useState({
+const AddPaymentCat = () => {
+  const [cat, setCat] = useState({
     title: "",
-    amount: "",
+    desc: "",
   });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const res = await axios.post("/api/admin/payments", record);
+      const res = await axios.post("/api/admin/payment-category", cat);
       if (res.status === 201) {
         alert(`${res.data}`);
-        setRecord({
+        setCat({
           title: "",
-          amount: "",
+          desc: "",
         });
       }
     } catch (error) {
@@ -41,36 +41,33 @@ const AddPayment = () => {
       }}
     >
       <TextField
-        fullWidth
-        value={record.title}
         variant="filled"
         label="Title"
-        required
-        placeholder="Laboratory Fee"
+        placeholder="Tests"
+        fullWidth
+        value={cat.title}
         onChange={(e) =>
-          setRecord({
-            ...record,
+          setCat({
+            ...cat,
             title: e.target.value,
           })
         }
       />
-
       <TextField
-        fullWidth
-        value={record.amount === "" ? "" : record.amount}
         variant="filled"
-        label="Amount"
-        required
-        placeholder="38"
-        type="number"
+        label="Description"
+        fullWidth
+        placeholder="Blood Test, Urine....."
+        multiline
+        minRows={5}
+        value={cat.desc}
         onChange={(e) =>
-          setRecord({
-            ...record,
-            amount: e.target.value,
+          setCat({
+            ...cat,
+            desc: e.target.value,
           })
         }
       />
-
       <Button variant="contained" color="success" type="submit">
         Submit
       </Button>
@@ -78,4 +75,4 @@ const AddPayment = () => {
   );
 };
 
-export default AddPayment;
+export default AddPaymentCat;

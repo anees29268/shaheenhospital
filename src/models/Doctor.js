@@ -25,6 +25,10 @@ const doctorSchema = new mongoose.Schema(
     desc: {
       type: String,
     },
+    status: {
+      type: String,
+      enum: ["active", "non-active"],
+    },
 
     address: {
       type: String,
