@@ -61,15 +61,7 @@ export default function Wrapper({ children }) {
           <CircularProgress color="secondary" />
         </Box>
       ) : (
-        <Box
-          display={"flex"}
-          flexDirection={"column"}
-          sx={{
-            width: "100%",
-            height: "100%",
-            overflowX: "hidden",
-          }}
-        >
+        <Box display={"flex"} flexDirection={"column"}>
           {/* Sidebar */}
 
           <Drawer

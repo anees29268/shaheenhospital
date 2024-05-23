@@ -1,14 +1,42 @@
 "use client";
 
-import { Box, Button, Grid, TextField } from "@mui/material";
+import {
+  Box,
+  Button,
+  FormControl,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+} from "@mui/material";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const AddPayment = () => {
   const [record, setRecord] = useState({
     title: "",
     amount: "",
+    paymentCat: "",
+    paymentCatName: "",
   });
+
+  const [cat, setCat] = useState();
+
+  const getPaymentCat = async () => {
+    try {
+      const res = await axios.get("/api/admin/payment-category");
+      if (res.status === 200) {
+        setCat(res.data);
+      }
+    } catch (error) {
+      alert(`${error}`);
+    }
+  };
+
+  useEffect(() => {
+    getPaymentCat();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,6 +54,7 @@ const AddPayment = () => {
       alert(`${error}`);
     }
   };
+
   return (
     <Box
       component={"form"}
@@ -70,6 +99,31 @@ const AddPayment = () => {
           })
         }
       />
+      <FormControl fullWidth variant="filled" required>
+        <InputLabel id="demo-simple-select-label">Category</InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={record.paymentCat}
+          label="Category"
+          onChange={(e) =>
+            setRecord({
+              ...record,
+              paymentCat: e.target.value,
+            })
+          }
+        >
+          {cat ? (
+            cat.map((item, key) => (
+              <MenuItem key={key} value={item._id}>
+                {item.title}
+              </MenuItem>
+            ))
+          ) : (
+            <>loading...</>
+          )}
+        </Select>
+      </FormControl>
 
       <Button variant="contained" color="success" type="submit">
         Submit

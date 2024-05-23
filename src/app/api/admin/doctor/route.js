@@ -50,9 +50,7 @@ export async function GET() {
 
     const doctors = await Doctor.find();
 
-    if (doctors) {
-      return new NextResponse(JSON.stringify(doctors), { status: 200 });
-    }
+    return new NextResponse(JSON.stringify(doctors), { status: 200 });
   } catch (error) {
     return new NextResponse(error, { status: 500 });
   }

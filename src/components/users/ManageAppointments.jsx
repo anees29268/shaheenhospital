@@ -53,6 +53,14 @@ const ManageAppointments = () => {
         ),
       },
       {
+        accessorKey: "fee", //normal accessorKey
+        header: "Fee",
+        size: 200,
+        Cell: ({ renderedCellValue, row }) => (
+          <>{renderedCellValue.toLocaleString()}</>
+        ),
+      },
+      {
         accessorKey: "appointmentDate",
         header: "Appointment Date",
         size: 150,

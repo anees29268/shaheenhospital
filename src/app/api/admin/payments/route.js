@@ -3,10 +3,10 @@ import dbConn from "@/utils/dbConn";
 import { NextResponse } from "next/server";
 
 export async function POST(req) {
-  const { title, amount } = await req.json();
+  const { title, amount, paymentCat } = await req.json();
 
   try {
-    if (!title || !amount) {
+    if (!title || !amount || !paymentCat) {
       return new NextResponse("Fields Messing", { status: 400 });
     }
     await dbConn();
@@ -14,6 +14,7 @@ export async function POST(req) {
     const payment = await Payment({
       title,
       amount,
+      paymentCat,
     });
 
     const res = await payment.save();
@@ -29,7 +30,7 @@ export async function GET() {
   try {
     await dbConn();
 
-    const res = await Payment.find();
+    const res = await Payment.find().populate("paymentCat");
 
     if (res) {
       return new NextResponse(JSON.stringify(res), { status: 200 });
@@ -39,7 +40,7 @@ export async function GET() {
   }
 }
 export async function PUT(req) {
-  const { _id, title, amount } = await req.json();
+  const { _id, title, amount, paymentCat } = await req.json();
   try {
     await dbConn();
 
@@ -48,6 +49,7 @@ export async function PUT(req) {
       {
         title,
         amount,
+        paymentCat,
       },
       { new: true }
     );

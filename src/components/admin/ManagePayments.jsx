@@ -61,6 +61,11 @@ const ManagePayments = () => {
         header: "Title",
         size: 150,
       },
+      {
+        accessorKey: "paymentCat.title", //access nested data with dot notation
+        header: "Category",
+        size: 150,
+      },
 
       {
         accessorKey: "amount", //access nested data with dot notation

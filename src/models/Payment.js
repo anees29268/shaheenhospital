@@ -1,4 +1,5 @@
 const { default: mongoose } = require("mongoose");
+import PaymentCategory from "./PaymentCategory";
 
 const paymentSchema = new mongoose.Schema(
   {
@@ -9,6 +10,11 @@ const paymentSchema = new mongoose.Schema(
     amount: {
       type: Number,
       required: true,
+    },
+    paymentCat: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "PaymentCategory",
     },
   },
   {

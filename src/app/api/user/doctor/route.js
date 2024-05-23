@@ -7,7 +7,9 @@ export async function GET() {
   try {
     await dbConn();
 
-    const doctors = await Doctor.find();
+    const doctors = await Doctor.find({
+      status: "active",
+    });
 
     return new NextResponse(JSON.stringify(doctors), { status: 200 });
   } catch (error) {

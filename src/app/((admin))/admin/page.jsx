@@ -1,6 +1,7 @@
 "use client";
 
 import MainCard from "@/components/admin/dashboard/MainCard";
+import TodayCard from "@/components/admin/dashboard/TodayCard";
 import Headings from "@/components/globals/Headings";
 import { Avatar, Box, Divider, Stack, Typography } from "@mui/material";
 import axios from "axios";
@@ -11,6 +12,7 @@ const Dashboard = () => {
   const session = useSession();
 
   const [mainData, setMainData] = useState();
+  const [todayData, setTodayDate] = useState();
 
   const getMainData = async () => {
     try {
@@ -22,9 +24,20 @@ const Dashboard = () => {
       alert(`${error}`);
     }
   };
+  const getTodayData = async () => {
+    try {
+      const res = await axios.get("/api/admin/dashboard/today");
+      if (res.status === 200) {
+        setTodayDate(res.data);
+      }
+    } catch (error) {
+      alert(`${error}`);
+    }
+  };
 
   useEffect(() => {
     getMainData();
+    getTodayData();
   }, []);
 
   return (
@@ -63,137 +76,29 @@ const Dashboard = () => {
       <Divider />
       <Headings title={"Today Sales"} />
       <Box display={"flex"} gap={2}>
-        <Box
-          display={"flex"}
-          flexDirection={"column"}
-          p={"10px 10px"}
-          // alignItems={"center"}
-          gap={1}
-          sx={{
-            background: "linear-gradient(to right, #a9e3e5, #daf3b6)",
-            borderRadius: 1,
-            minWidth: 250,
-          }}
-        >
-          <Box
-            display={"flex"}
-            justifyContent={"space-between"}
-            width={"100%"}
-            alignItems={"center"}
-          >
-            <Avatar
-              src="/assets/fees/fee1.png"
-              variant="square"
-              sx={{
-                height: 40,
-                width: 40,
-              }}
-            />
-            <Typography fontWeight={700} variant="body1">
-              OPD Fees
-            </Typography>
-          </Box>
-
-          <Typography
-            variant="body1"
-            fontWeight={700}
-            sx={{
-              ml: 2,
-              mt: 1,
-            }}
-          >
-            RS. 15,000
-          </Typography>
-        </Box>
-        <Box display={"flex"} gap={2}>
-          <Box
-            display={"flex"}
-            flexDirection={"column"}
-            p={"10px 10px"}
-            // alignItems={"center"}
-            gap={1}
-            sx={{
-              background: "linear-gradient(to right, #a9e3e5, #daf3b6)",
-              borderRadius: 1,
-              minWidth: 250,
-            }}
-          >
-            <Box
-              display={"flex"}
-              justifyContent={"space-between"}
-              width={"100%"}
-              alignItems={"center"}
-            >
-              <Avatar
-                src="/assets/fees/fee2.png"
-                variant="square"
-                sx={{
-                  height: 40,
-                  width: 40,
-                }}
+        <TodayCard
+          src={"/assets/fees/fee2.png"}
+          title={"OPD Fees"}
+          bgcolor={"linear-gradient(to right, #a9e3e5, #daf3b6)"}
+          total={todayData && todayData.opdFee}
+        />
+        <TodayCard
+          src={"/assets/fees/fee1.png"}
+          title={"Appointments"}
+          bgcolor={"linear-gradient(to right, #a9e3e5, #daf3b6)"}
+          total={todayData && todayData.aptFee}
+        />
+        {todayData && todayData.testsResult && todayData.testsResult.length > 0
+          ? todayData.testsResult.map((item, key) => (
+              <TodayCard
+                key={key}
+                src={"/assets/fees/fee3.png"}
+                title={item.title}
+                bgcolor={"linear-gradient(to right, #a9e3e5, #daf3b6)"}
+                total={item.totalAmount}
               />
-              <Typography fontWeight={700} variant="body1" maxWidth={130}>
-                Appointments
-              </Typography>
-            </Box>
-
-            <Typography
-              variant="body1"
-              fontWeight={700}
-              sx={{
-                ml: 2,
-                mt: 1,
-              }}
-            >
-              RS. 10,500
-            </Typography>
-          </Box>
-        </Box>
-
-        <Box display={"flex"} gap={2}>
-          <Box
-            display={"flex"}
-            flexDirection={"column"}
-            p={"10px 10px"}
-            // alignItems={"center"}
-            gap={1}
-            sx={{
-              background: "linear-gradient(to right, #a9e3e5, #daf3b6)",
-              borderRadius: 1,
-              minWidth: 250,
-            }}
-          >
-            <Box
-              display={"flex"}
-              justifyContent={"space-between"}
-              width={"100%"}
-              alignItems={"center"}
-            >
-              <Avatar
-                src="/assets/fees/fee3.png"
-                variant="square"
-                sx={{
-                  height: 40,
-                  width: 40,
-                }}
-              />
-              <Typography fontWeight={700} variant="body1" maxWidth={130}>
-                Others
-              </Typography>
-            </Box>
-
-            <Typography
-              variant="body1"
-              fontWeight={700}
-              sx={{
-                ml: 2,
-                mt: 1,
-              }}
-            >
-              RS. 23,500
-            </Typography>
-          </Box>
-        </Box>
+            ))
+          : null}
       </Box>
     </Stack>
   );
