@@ -8,9 +8,7 @@ export async function GET() {
   try {
     await dbConn();
 
-    const doctors = await Doctor.find({
-      status: "active",
-    });
+    const doctors = await Doctor.find();
     const users = await User.find();
     const patients = await Patient.find();
     const ePatients = await Patient.find({
