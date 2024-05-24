@@ -62,9 +62,40 @@ const Doctors = () => {
     ],
     []
   );
+  const doctorsColumns = useMemo(
+    () => [
+      {
+        accessorKey: "doctorId.name", //access nested data with dot notation
+        header: "Doctor",
+        size: 150,
+      },
+      {
+        accessorKey: "doctorId.contact", //access nested data with dot notation
+        header: "Contact",
+        size: 150,
+      },
+      {
+        accessorKey: "doctorId.specialization", //access nested data with dot notation
+        header: "Specialization",
+        size: 150,
+      },
+      {
+        accessorKey: "doctorId.address", //access nested data with dot notation
+        header: "Address",
+        size: 150,
+      },
+    ],
+    []
+  );
+
+  console.log(doctorsTiming);
 
   const table = useMaterialReactTable({
     columns,
+    data: doctorsTiming ? doctorsTiming : [],
+  });
+  const doctorTable = useMaterialReactTable({
+    columns: doctorsColumns,
     data: doctorsTiming ? doctorsTiming : [],
   });
 
@@ -85,7 +116,7 @@ const Doctors = () => {
   }, []);
 
   return (
-    <Stack direction="column" spacing={1} p={3}>
+    <Stack direction="column" spacing={3} p={3}>
       <Box className="global" gap={1}>
         <Tabs
           value={tabIndex}
@@ -97,17 +128,13 @@ const Doctors = () => {
           <Tab label="Doctors Details" icon={<Medication />} />
         </Tabs>
       </Box>
-      <Box hidden={tabIndex !== 0}>
-        <Paper
-          elevation={10}
-          sx={{
-            p: 1,
-          }}
-        >
-          <MaterialReactTable table={table} />
-        </Paper>
+
+      <Box hidden={tabIndex !== 0} mt={2}>
+        <MaterialReactTable table={table} />
       </Box>
-      <Box hidden={tabIndex !== 1}></Box>
+      <Box hidden={tabIndex !== 1} mt={2}>
+        <MaterialReactTable table={doctorTable} />
+      </Box>
     </Stack>
   );
 };
