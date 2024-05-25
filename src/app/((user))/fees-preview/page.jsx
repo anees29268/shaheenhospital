@@ -56,6 +56,9 @@ const FeesPrintPreviews = ({
   }, []);
 
   const identifyGenderFromCNIC = (cnic) => {
+    if (!cnic) {
+      return "---";
+    }
     let cnicStr = cnic.toString();
     const lastDigit = parseInt(cnicStr[cnicStr.length - 1]);
     return lastDigit % 2 === 0 ? "Female" : "Male";
