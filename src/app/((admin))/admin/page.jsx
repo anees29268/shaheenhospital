@@ -3,42 +3,27 @@
 import MainCard from "@/components/admin/dashboard/MainCard";
 import TodayCard from "@/components/admin/dashboard/TodayCard";
 import Headings from "@/components/globals/Headings";
+import { dashboardMain, dashboardToday } from "@/redux/apis";
 import { Avatar, Box, Divider, Stack, Typography } from "@mui/material";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 const Dashboard = () => {
   const session = useSession();
 
-  const [mainData, setMainData] = useState();
-  const [todayData, setTodayDate] = useState();
+  // const [mainData, setMainData] = useState();
+  // const [todayData, setTodayDate] = useState();
+  const dispatch = useDispatch();
 
-  const getMainData = async () => {
-    try {
-      const res = await axios.get("/api/admin/dashboard");
-      if (res.status === 200) {
-        setMainData(res.data);
-      }
-    } catch (error) {
-      alert(`${error}`);
-    }
-  };
-  const getTodayData = async () => {
-    try {
-      const res = await axios.get("/api/admin/dashboard/today");
-      if (res.status === 200) {
-        setTodayDate(res.data);
-      }
-    } catch (error) {
-      alert(`${error}`);
-    }
-  };
+  const mainData = useSelector((data) => data.mainData);
+  const todayData = useSelector((data) => data.todayData);
 
   useEffect(() => {
-    getMainData();
-    getTodayData();
-  }, []);
+    dispatch(dashboardMain());
+    dispatch(dashboardToday());
+  }, [dispatch]);
 
   return (
     <Stack direction={"column"} p={3} spacing={3}>
@@ -46,7 +31,7 @@ const Dashboard = () => {
         Welcome {session?.data?.user?.name}
       </Typography>
 
-      <Box display={"flex"} gap={2}>
+      <Box display={"flex"} gap={2} flexWrap={"wrap"}>
         <MainCard
           title={"Total Doctors"}
           amt={mainData && mainData.totalDoctor}
@@ -75,7 +60,7 @@ const Dashboard = () => {
       </Box>
       <Divider />
       <Headings title={"Today Sales"} />
-      <Box display={"flex"} gap={2}>
+      <Box display={"flex"} gap={2} flexWrap={"wrap"}>
         <TodayCard
           src={"/assets/fees/fee2.png"}
           title={"OPD Fees"}

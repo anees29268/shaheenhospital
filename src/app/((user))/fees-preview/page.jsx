@@ -55,6 +55,12 @@ const FeesPrintPreviews = ({
     );
   }, []);
 
+  const identifyGenderFromCNIC = (cnic) => {
+    let cnicStr = cnic.toString();
+    const lastDigit = parseInt(cnicStr[cnicStr.length - 1]);
+    return lastDigit % 2 === 0 ? "Female" : "Male";
+  };
+
   return (
     <Box p={4}>
       <ReactToPrint
@@ -136,7 +142,9 @@ const FeesPrintPreviews = ({
               </Box>
               <Box>
                 <b>Gender: </b>
-                <Typography variant="body2">{gender}</Typography>
+                <Typography variant="body2">
+                  {identifyGenderFromCNIC(cnic)}
+                </Typography>
               </Box>
               <Box>
                 <b>Age: </b>

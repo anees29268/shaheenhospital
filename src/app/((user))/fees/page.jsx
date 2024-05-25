@@ -1,6 +1,6 @@
 "use client";
 
-import { AddBox, Delete, ManageAccounts } from "@mui/icons-material";
+import { AddBox, Delete, ManageAccounts, Print } from "@mui/icons-material";
 import {
   Autocomplete,
   Box,
@@ -27,6 +27,7 @@ const User_Fees = () => {
   const [payment, setPayment] = useState();
   const [getFees, setGetFees] = useState();
   const [pat, setPat] = useState();
+  const [recordPat, setRecordPat] = useState();
 
   const [tabIndex, setTabIndex] = useState(0);
 
@@ -142,12 +143,33 @@ const User_Fees = () => {
     }
   };
 
+  const handlePatPreview = async (row) => {
+    const id = row.original._id;
+
+    try {
+      const res = await axios.get(`/api/user/fees/${id}`);
+      setRecordPat(res.data);
+    } catch (error) {
+      alert(`${error}`);
+    }
+  };
+
   const columns = useMemo(
     () => [
       {
         accessorKey: "_id", //access nested data with dot notation
         header: "ID",
         size: 150,
+      },
+      {
+        accessorKey: "actions",
+        header: "Preview",
+        size: 50,
+        Cell: ({ renderedCellValue, row }) => (
+          <IconButton color="secondary" onClick={() => handlePatPreview(row)}>
+            <Print />
+          </IconButton>
+        ),
       },
       {
         accessorKey: "patientId.name", //access nested data with dot notation
@@ -333,26 +355,42 @@ const User_Fees = () => {
             Submit
           </Button>
         </Container>
+        {pat ? (
+          <FeesPrintPreviews
+            name={pat.name}
+            token={pat._id}
+            patientType={pat.case}
+            father_husband={pat.fatherName}
+            payment={fee.payment.title}
+            amount={fee.amount}
+            discount={fee.discount}
+            address={pat.address}
+            total={fee.amount - fee.discount}
+            contact={pat.contact}
+            age={pat.age}
+            cnic={pat.cnic}
+          />
+        ) : null}
       </Box>
       <Box hidden={tabIndex !== 1}>
         <MaterialReactTable table={table} />
+        {recordPat ? (
+          <FeesPrintPreviews
+            name={recordPat.patientId.name}
+            token={recordPat.patientId._id}
+            patientType={recordPat.patientId.case}
+            father_husband={recordPat.patientId.fatherName}
+            payment={recordPat.paymentId.title}
+            amount={recordPat.amount}
+            discount={recordPat.discount}
+            address={recordPat.patientId.address}
+            total={recordPat.amount - recordPat.discount}
+            contact={recordPat.patientId.contact}
+            age={recordPat.patientId.age}
+            cnic={recordPat.patientId.cnic}
+          />
+        ) : null}
       </Box>
-      {pat ? (
-        <FeesPrintPreviews
-          name={pat.name}
-          token={pat._id}
-          patientType={pat.case}
-          father_husband={pat.fatherName}
-          payment={fee.payment.title}
-          amount={fee.amount}
-          discount={fee.discount}
-          address={pat.address}
-          total={fee.amount - fee.discount}
-          contact={pat.contact}
-          age={pat.age}
-          cnic={pat.cnic}
-        />
-      ) : null}
     </Stack>
   );
 };

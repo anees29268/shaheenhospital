@@ -1,10 +1,12 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { fetchUser } from "./apis";
+import { dashboardMain, dashboardToday, fetchUser } from "./apis";
 
 const initialState = {
   mode: "light",
   isLoaderLoading: false,
   user: null,
+  mainData: null,
+  todayData: null,
 };
 
 const Slice = createSlice({
@@ -27,6 +29,18 @@ const Slice = createSlice({
         state.user = action.payload;
       })
       .addCase(fetchUser.rejected, (state, action) => {
+        // Handle rejected state if needed
+      })
+      .addCase(dashboardMain.fulfilled, (state, action) => {
+        state.mainData = action.payload;
+      })
+      .addCase(dashboardMain.rejected, (state, action) => {
+        // Handle rejected state if needed
+      })
+      .addCase(dashboardToday.fulfilled, (state, action) => {
+        state.todayData = action.payload;
+      })
+      .addCase(dashboardToday.rejected, (state, action) => {
         // Handle rejected state if needed
       });
   },

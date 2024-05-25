@@ -25,19 +25,17 @@ export async function GET() {
     const totalPatients = patients.length;
     const generalPatients = gPatients.length;
     const emergencyPatients = ePatients.length;
+    const data = {
+      totalDoctor,
+      totalUsers,
+      totalPatients,
+      emergencyPatients,
+      generalPatients,
+    };
 
-    return new NextResponse(
-      JSON.stringify({
-        totalDoctor,
-        totalUsers,
-        totalPatients,
-        emergencyPatients,
-        generalPatients,
-      }),
-      {
-        status: 200,
-      }
-    );
+    return new NextResponse(JSON.stringify(data), {
+      status: 200,
+    });
   } catch (error) {
     return new NextResponse(error, { status: 500 });
   }

@@ -73,7 +73,13 @@ const Header = ({ userName }) => {
         >
           <MenuIcon />
         </IconButton>
-        <Typography variant="h6">Shaheen Hospital</Typography>
+        <Box className="global" gap={1}>
+          <Avatar src="/assets/logo.jpg" />
+          <Typography variant="h6" textTransform={"uppercase"}>
+            Shaheen Hospital
+          </Typography>
+        </Box>
+
         <Box mr={"50px"}>
           <Tooltip title="Open settings">
             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>

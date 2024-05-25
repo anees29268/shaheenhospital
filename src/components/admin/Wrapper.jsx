@@ -73,6 +73,7 @@ export default function Wrapper({ children }) {
               direction={"column"}
               spacing={1}
               width={250}
+              className="siderbarbg"
               sx={{
                 bgcolor: theme.palette.mainAccent[300],
                 height: "100%",

@@ -12,3 +12,25 @@ export const fetchUser = createAsyncThunk(
     }
   }
 );
+export const dashboardMain = createAsyncThunk(
+  "addUserSlice/dashoboardMain",
+  async (_, thunkAPI) => {
+    try {
+      const response = await axios.get("/api/admin/dashboard");
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  }
+);
+export const dashboardToday = createAsyncThunk(
+  "addUserSlice/dashboardToday",
+  async (_, thunkAPI) => {
+    try {
+      const response = await axios.get("/api/admin/dashboard/today");
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  }
+);

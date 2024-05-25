@@ -4,7 +4,10 @@ import GeneralRecords from "@/components/users/GeneralRecords";
 import { MedicalServices, Medication, Print } from "@mui/icons-material";
 import {
   Box,
+  Container,
+  FormControl,
   IconButton,
+  InputLabel,
   MenuItem,
   Select,
   Stack,
@@ -48,6 +51,10 @@ const Records = () => {
       });
       if (res.status === 200) {
         if (caseType === "general") {
+          if (!res.data.length) {
+            alert("No Appointment Found for this patient");
+            return;
+          }
           setApt(res.data);
           setAllApt(res.data);
         } else {
@@ -203,11 +210,13 @@ const Records = () => {
 
   const handleDoctorChange = (value) => {
     const data = allApt.filter((item) => item._id === value);
-    setApt(data);
+    if (data) {
+      setApt(data);
+    }
   };
 
   return (
-    <Stack direction="column" spacing={1} p={3}>
+    <Stack direction="column" spacing={2} p={3}>
       <Box className="global" gap={1}>
         <Tabs
           value={tabIndex}
@@ -219,22 +228,28 @@ const Records = () => {
           <Tab label="Appointed Patients" icon={<Medication />} />
         </Tabs>
       </Box>
-      <Box maxWidth={350} hidden={tabIndex !== 1}>
+      <Box width={"100%"} hidden={tabIndex !== 1}>
         {allApt && (
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={doctor}
-            label="Select Doctor"
-            sx={{ minWidth: 350 }}
-            onChange={(e) => handleDoctorChange(e.target.value)}
-          >
-            {allApt.map((item, key) => (
-              <MenuItem key={key} value={item._id}>
-                {item.doctor.name}
-              </MenuItem>
-            ))}
-          </Select>
+          <FormControl fullWidth variant="filled">
+            <InputLabel id="demo-simple-select-label">Select Doctor</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={doctor}
+              label="Select Doctor"
+              sx={{
+                minWidth: 350,
+                maxWidth: 500,
+              }}
+              onChange={(e) => handleDoctorChange(e.target.value)}
+            >
+              {allApt.map((item, key) => (
+                <MenuItem key={key} value={item._id}>
+                  {item.doctor.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         )}
       </Box>
       {allRecords.length > 0 ? (
