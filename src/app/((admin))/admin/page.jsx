@@ -23,7 +23,7 @@ const Dashboard = () => {
   useEffect(() => {
     dispatch(dashboardMain());
     dispatch(dashboardToday());
-  }, [dispatch]);
+  }, []);
 
   return (
     <Stack direction={"column"} p={3} spacing={3}>
@@ -34,27 +34,27 @@ const Dashboard = () => {
       <Box display={"flex"} gap={2} flexWrap={"wrap"}>
         <MainCard
           title={"Total Doctors"}
-          amt={mainData && mainData.totalDoctor}
+          amt={mainData ? mainData.totalDoctor : 0}
           src={"/assets/doctors/doctors.png"}
         />
         <MainCard
           title={"Total Users"}
-          amt={mainData && mainData.totalUsers}
+          amt={mainData ? mainData.totalUsers : 0}
           src={"/assets/doctors/users.png"}
         />
         <MainCard
           title={"Total Patients"}
-          amt={mainData && mainData.totalPatients}
+          amt={mainData ? mainData.totalPatients : 0}
           src={"/assets/patients/patients.png"}
         />
         <MainCard
           title={"Emergency Patients"}
-          amt={mainData && mainData.emergencyPatients}
+          amt={mainData ? mainData.emergencyPatients : 0}
           src={"/assets/patients/emergencyPatient.png"}
         />
         <MainCard
           title={"General Patients"}
-          amt={mainData && mainData.generalPatients}
+          amt={mainData ? mainData.generalPatients : 0}
           src={"/assets/patients/generalPatient.png"}
         />
       </Box>
@@ -65,13 +65,13 @@ const Dashboard = () => {
           src={"/assets/fees/fee2.png"}
           title={"OPD Fees"}
           bgcolor={"linear-gradient(to right, #a9e3e5, #daf3b6)"}
-          total={todayData && todayData.opdFee}
+          total={todayData ? todayData.opdFee : 0}
         />
         <TodayCard
           src={"/assets/fees/fee1.png"}
           title={"Appointments"}
           bgcolor={"linear-gradient(to right, #a9e3e5, #daf3b6)"}
-          total={todayData && todayData.aptFee}
+          total={todayData ? todayData.aptFee : 0}
         />
         {todayData && todayData.testsResult && todayData.testsResult.length > 0
           ? todayData.testsResult.map((item, key) => (
