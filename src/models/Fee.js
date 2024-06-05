@@ -21,7 +21,15 @@ const feeSchema = new mongoose.Schema(
     discount: {
       type: Number,
     },
+    status: {
+      type: String,
+      required: true,
+      enum: ["pending", "completed"],
+    },
     desc: {
+      type: String,
+    },
+    report: {
       type: String,
     },
   },

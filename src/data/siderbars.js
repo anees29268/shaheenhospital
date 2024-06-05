@@ -1,6 +1,7 @@
 import {
   Diversity2,
   Home,
+  MedicationTwoTone,
   Memory,
   Payment,
   PaymentOutlined,
@@ -33,6 +34,11 @@ export const userMenu = [
     title: "Fees",
     icon: <PaymentOutlined />,
     url: "/fees",
+  },
+  {
+    title: "Laboratory",
+    icon: <MedicationTwoTone />,
+    url: "/laboratory",
   },
 ];
 export const doctorMenu = [

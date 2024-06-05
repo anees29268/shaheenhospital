@@ -34,6 +34,7 @@ export async function POST(req) {
       amount,
       discount,
       desc,
+      status: "pending",
     });
     const res = await fees.save();
 
