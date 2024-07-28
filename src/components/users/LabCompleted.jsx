@@ -45,7 +45,7 @@ const LabCompleted = () => {
         const newData = res.data.filter(
           (item) =>
             item.paymentId.paymentCat === "664e3036aba278ddf0be71f9" &&
-            item.status === "pending"
+            item.status === "completed"
         );
         setGetFees(newData);
       }
